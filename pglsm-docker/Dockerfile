@@ -12,9 +12,9 @@ WORKDIR /src/lsm3
 RUN chmod 777 /src/lsm3
 RUN make USE_PGXS=1 &&\
     make install USE_PGXS=1
-RUN cat lsm3.conf >> /etc/postgresql/13/main/postgresql.conf &&\
-    pg_ctlcluster start 13 main &&\
-    service postgresql reload &&\
-    su - postgres -c "cd /src/lsm3; make installcheck USE_PGXS=1" &&\
-    service postgresql stop
+RUN cat lsm3.conf >> /etc/postgresql/13/main/postgresql.conf
+#     pg_ctlcluster start 13 main &&\
+#     service postgresql reload &&\
+#     su - postgres -c "cd /src/lsm3; make installcheck USE_PGXS=1" &&\
+#     service postgresql stop
 WORKDIR ~
