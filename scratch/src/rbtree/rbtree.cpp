@@ -1,7 +1,7 @@
 #include "rbtree.h"
 
 #ifndef INCLUDE_BTREESRC
-#define INCLUDE_BTRESRC
+#define INCLUDE_BTREESRC
 
 _temp1_
 Node<K,V>* BinaryTree<K,V>::_search(K k){
