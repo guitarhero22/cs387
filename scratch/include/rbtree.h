@@ -6,15 +6,12 @@
 #include<time.h>
 #include "files.h"
 
-#define _temp_ template<typename T>
-#define _temp1_ template<typename K, typename V>
-
 #ifndef INCLUDE_RBTREE
 #define INCLUDE_RBTREE
 
 using namespace std;
 
-_temp1_
+template<typename K, typename V>
 class Node{
     /* 
         K - Key Type
@@ -31,7 +28,7 @@ class Node{
             key(k), value(v), l(NULL), r(NULL){} //class constructor
 };
 
-_temp1_
+template<typename K, typename V>
 class BinaryTree{
     /* 
         K - Key Type
@@ -53,10 +50,14 @@ class BinaryTree{
                 fprintf(stderr, "Key and Value size not consistent with block size");
                 exit(1);
             }
-            if((sz_v + sz_k) < 20){
-                fprintf(stderr, "Combined size of key and value less than timestamp size, functionality not implemented");
-                exit(1);
-            }
+
+            #ifdef _DEBUG
+                fprintf(stderr, "Size of Key %d, Size of Value %d\n", sz_k, sz_v);
+            #endif
+            // if((sz_v + sz_k) < 20){
+            //     fprintf(stderr, "Combined size of key and value less than timestamp size, functionality not implemented");
+            //     exit(1);
+            // }
         }
         BinaryTree(): 
             sz_k(sizeof(K)), sz_v(sizeof(V))
@@ -93,7 +94,7 @@ class BinaryTree{
         Node<K,V>* _inorder();//inorder travversal of the tree for traversal
 };
 
-// _temp1_
+// template<typename K, typename V>
 // class  RBTree{
 //     public:
 //         Node<K,V>* search(K);
@@ -107,7 +108,7 @@ class BinaryTree{
 #ifndef INCLUDE_BTREESRC
 #define INCLUDE_BTREESRC
 
-_temp1_
+template<typename K, typename V>
 Node<K,V>* BinaryTree<K,V>::_search(K k){
     Node<K,V> *cur = this->root;
     while(cur != NULL){
@@ -131,7 +132,7 @@ Node<K,V>* BinaryTree<K,V>::_search(K k){
     return cur;
 }
 
-_temp1_
+template<typename K, typename V>
 Node<K,V>* BinaryTree<K,V>::search(K k){
     Node<K,V> *n = this->_search(k);
     if(n == NULL) return NULL;
@@ -139,7 +140,7 @@ Node<K,V>* BinaryTree<K,V>::search(K k){
     return NULL;
 }
 
-_temp1_
+template<typename K, typename V>
 int BinaryTree<K,V>::insert(K k, V v){
 
     Node<K,V>* p = this->_search(k);
@@ -164,12 +165,12 @@ int BinaryTree<K,V>::insert(K k, V v){
     return 0;
 }
 
-_temp1_
+template<typename K, typename V>
 int BinaryTree<K,V>::insert(Node<K,V> n){
     return this->insert(n.key, n.value);
 }
 
-_temp1_
+template<typename K, typename V>
 int BinaryTree<K,V>::del(K k){
     Node<K,V> *n = this->search(k);
     if(n == NULL) return -1;
@@ -177,12 +178,12 @@ int BinaryTree<K,V>::del(K k){
     return 0;
 }
 
-_temp1_
+template<typename K, typename V>
 int BinaryTree<K,V>::del(Node<K,V> *n){
     return this->del(n->key);
 }
 
-_temp1_
+template<typename K, typename V>
 Node<K,V>* BinaryTree<K,V>::_inorder(){
     //Under DEV TODO
     if(!traversal_started){
@@ -209,38 +210,45 @@ Node<K,V>* BinaryTree<K,V>::_inorder(){
     return n; 
 }
 
-_temp1_
+template<typename K, typename V>
 int BinaryTree<K,V>::dump(FILE *f){
     /* Dumps the tree content in a file */
     traversal_started = 1;
     while(!stk.empty()) stk.pop();
-    if(root != NULL){
-        Node<K,V>* n = root;
-        while(n != NULL){
-            stk.push(n);
-            n = n -> l;
-        }
+    Node<K,V>* n = root;
+    while(n != NULL){
+        stk.push(n);
+        n = n -> l;
     }
 
     int num_entries = BLK_SIZE / (sz_k + sz_v);
 
     // get time
     char *time_str;
-    time_str = malloc(sizeof(char) * (sz_k + sz_v));
-    for(int i=0;i<64;i++) time_str[i] = ' ';
+    time_str = (char*) malloc(sz_k + sz_v);
+    for(int i=0;i<sz_k + sz_v;i++) time_str[i] = ' ';
     time_t now = time(0);
     tm tstruct = *localtime(&now);
     tstruct = *localtime(&now);
-    strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
-    printf("%s\n", buf);
+    strftime(time_str, sz_k + sz_v, "%Y-%m-%d.%X", &tstruct);
+    #ifdef _DEBUG
+        fprintf(stderr, "Check the time: %s\n", time_str);
+    #endif
+    fwrite(time_str, 1, sz_k + sz_v, f);
 
-    Node<K,V> * n;
     while(!stk.empty()){
         n = stk.top();
         stk.pop();
         /* 
             Do whatever you want with n here 
         */
+        #ifdef _DEBUG
+            fprintf(stderr, "Program Here\n");
+        #endif
+
+        fwrite(&(n -> key), 1, sz_k, f);
+        fwrite(&(n -> value), 1, sz_v, f);
+
         n = n->r;
         while(n != NULL){
             stk.push(n);
@@ -248,6 +256,7 @@ int BinaryTree<K,V>::dump(FILE *f){
         }
     }
     traversal_started = 0;
+    fclose(f);
     return 0;
 }
 
