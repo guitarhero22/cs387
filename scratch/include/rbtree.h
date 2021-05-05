@@ -77,4 +77,6 @@ class BinaryTree{
 //         int del(Node<K,V>*)
 // };
 
+#include "rbtree.cpp"
+
 #endif
