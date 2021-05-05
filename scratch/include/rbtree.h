@@ -1,6 +1,10 @@
 #include<stdio.h>
+#include<stdlib.h>
 #include<vector>
 #include<stack>
+#include<cmath>
+#include<time.h>
+#include "files.h"
 
 #define _temp_ template<typename T>
 #define _temp1_ template<typename K, typename V>
@@ -33,22 +37,43 @@ class BinaryTree{
         K - Key Type
         V - Value Type
         K should have a < and == operator defined on them
+
+        For K use something like struct **K{char data[64];};** OR class **K{public: data[64];};**
     */
     public:
         Node<K,V>* root; //Pointer to the root
         int size = 0; //Number of Nodes
+        int traversal_started = 0, sz_k = 0, sz_v = 0;
         stack<Node<K,V>*> stk; // for inorder traversal
-        int traversal_started = 0;
 
         // Constructors ******************
-        BinaryTree(){}
-        BinaryTree(Node<K,V> n){ //class constructor
-            this->root = new Node<K,V>(); 
-            *this->root = n;
+        void check(){
+            float f = BLK_SIZE * 1.0 / (sz_k + sz_v);
+            if(floor(f) != f){
+                fprintf(stderr, "Key and Value size not consistent with block size");
+                exit(1);
+            }
+            if((sz_v + sz_k) < 20){
+                fprintf(stderr, "Combined size of key and value less than timestamp size, functionality not implemented");
+                exit(1);
+            }
         }
-        BinaryTree(K k, V v){ //class constructor
-            this->root = new Node<K,V>(k, v);
-        }
+        BinaryTree(): 
+            sz_k(sizeof(K)), sz_v(sizeof(V))
+            {check();}
+
+        BinaryTree(Node<K,V> n):
+            sz_k(sizeof(K)), sz_v(sizeof(V))
+            { //class constructor
+                this->root = new Node<K,V>(); 
+                *this->root = n;
+            }
+
+        BinaryTree(K k, V v):
+            sz_k(sizeof(K)), sz_v(sizeof(V))
+            { //class constructor
+                this->root = new Node<K,V>(k, v);
+            }
 
         //internal helper function / not to be used
         Node<K,V>* _search(K); 
@@ -63,7 +88,7 @@ class BinaryTree{
         int del(Node<K,V>*); //delete the Node with the same key as the given Node
 
         
-        int dump(FILE* f){return 0;}//dumps the tree in the given file and empties the tree
+        int dump(FILE*);//dumps the tree in the given file and empties the tree
         void empty(){}//empties the whole tree
         Node<K,V>* _inorder();//inorder travversal of the tree for traversal
 };
@@ -182,6 +207,48 @@ Node<K,V>* BinaryTree<K,V>::_inorder(){
         n1 = n1 -> l;
     }
     return n; 
+}
+
+_temp1_
+int BinaryTree<K,V>::dump(FILE *f){
+    /* Dumps the tree content in a file */
+    traversal_started = 1;
+    while(!stk.empty()) stk.pop();
+    if(root != NULL){
+        Node<K,V>* n = root;
+        while(n != NULL){
+            stk.push(n);
+            n = n -> l;
+        }
+    }
+
+    int num_entries = BLK_SIZE / (sz_k + sz_v);
+
+    // get time
+    char *time_str;
+    time_str = malloc(sizeof(char) * (sz_k + sz_v));
+    for(int i=0;i<64;i++) time_str[i] = ' ';
+    time_t now = time(0);
+    tm tstruct = *localtime(&now);
+    tstruct = *localtime(&now);
+    strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
+    printf("%s\n", buf);
+
+    Node<K,V> * n;
+    while(!stk.empty()){
+        n = stk.top();
+        stk.pop();
+        /* 
+            Do whatever you want with n here 
+        */
+        n = n->r;
+        while(n != NULL){
+            stk.push(n);
+            n = n->l;
+        }
+    }
+    traversal_started = 0;
+    return 0;
 }
 
 #endif
