@@ -9,9 +9,6 @@
 #include<time.h>
 #include "files.h"
 
-#ifndef INCLUDE_RBTREE
-#define INCLUDE_RBTREE
-
 using namespace std;
 
 template<typename K, typename V>
@@ -63,7 +60,7 @@ class BinaryTree{
             // }
         }
         BinaryTree(): 
-            sz_k(sizeof(K)), sz_v(sizeof(V))
+            sz_k(sizeof(K)), sz_v(sizeof(V)), root(NULL)
             {check();}
 
         BinaryTree(Node<K,V> n):
@@ -93,7 +90,7 @@ class BinaryTree{
 
         
         int dump(FILE*);//dumps the tree in the given file and empties the tree
-        void empty(){}//empties the whole tree
+        void _free();//empties the whole tree
         Node<K,V>* _inorder();//inorder travversal of the tree for traversal
 };
 
@@ -178,6 +175,7 @@ int BinaryTree<K,V>::del(K k){
     Node<K,V> *n = this->search(k);
     if(n == NULL) return -1;
     n -> del = 1;
+    memset(&(n -> value), 0, sz_v); //setting the value of the Value 0000...00000 for marking as delete
     return 0;
 }
 
@@ -229,11 +227,12 @@ int BinaryTree<K,V>::dump(FILE *f){
     // get time
     char *time_str;
     time_str = (char*) malloc(sz_k + sz_v);
-    for(int i=0;i<sz_k + sz_v;i++) time_str[i] = ' ';
+    for(int i=0;i<sz_k + sz_v;i++) time_str[i] = '0';
     time_t now = time(0);
     tm tstruct = *localtime(&now);
     tstruct = *localtime(&now);
-    strftime(time_str, sz_k + sz_v, "%Y-%m-%d.%X", &tstruct);
+    strftime(time_str, 20, "%Y-%m-%d.%X", &tstruct);
+    time_str[19] = '0';
     #ifdef _DEBUG
         fprintf(stderr, "Check the time: %s\n", time_str);
     #endif
@@ -260,8 +259,35 @@ int BinaryTree<K,V>::dump(FILE *f){
     }
     traversal_started = 0;
     fclose(f);
+    free(time_str);
     return 0;
 }
 
+template<typename K, typename V>
+void BinaryTree<K,V>::_free(){
+    traversal_started = 1;
+    while(!stk.empty()) stk.pop();
+    Node<K,V>* n = root;
+    if(n != NULL) stk.push(n);
+    #ifdef _DEBUG
+        if(!stk.empty()){
+                fprintf(stderr, "Size of tree: %d, stk not empty\n", size);
+        }
+    #endif
+    while(!stk.empty()){
+        #ifdef _DEBUG
+            fprintf(stderr, "_free: Program Here\n");
+        #endif
+        n = stk.top();
+        stk.pop();
+        if(n -> l != NULL) stk.push(n -> l);
+        if(n -> r != NULL) stk.push(n -> r);
+        delete n;
+    }
+    root = NULL;
+    size = 0;
+    traversal_started = 0;
+    return;
+}
+
 #endif
-#endif // __RBTREE_H__
