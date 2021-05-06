@@ -1,8 +1,8 @@
 #ifndef __BUFMAN_H__
 #define __BUFMAN_H__
 
-#include "../files.h"
-#include "../utils.hpp"
+#include "files.hpp"
+#include "utils.hpp"
 
 #include <string>
 #include <array>

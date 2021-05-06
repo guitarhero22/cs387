@@ -7,8 +7,7 @@
 #include<stack>
 #include<cmath>
 #include<time.h>
-#include<pthread.h>
-#include "files.h"
+#include "files.hpp"
 
 using namespace std;
 

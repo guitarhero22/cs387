@@ -1,6 +1,6 @@
-#include "bloom.h"
+#include "Bloom/bloom.hpp"
 #include <stdio.h>
-#include<string>
+#include <string>
 using namespace std;
 
 //    Use K and V as follows
