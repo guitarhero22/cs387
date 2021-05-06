@@ -208,7 +208,7 @@ int BinaryTree<K,V>::del(K k){
         return -1;
     }
     n -> del = 1;
-    memset(&(n -> value), 0, sz_v); //setting the value of the Value 0000...00000 for marking as delete
+    memset(&(n -> value), TOMBSTONE_BYTE, sz_v); //setting the value of the Value 0000...00000 for marking as delete
     Node<K,V> dummy;
     log_action(k, dummy.V, _del_);
     // pthread_mutex_unlock(&lock);
