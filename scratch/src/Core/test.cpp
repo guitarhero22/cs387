@@ -1,5 +1,6 @@
 #include "RBTree/rbtree.hpp"
 #include "Core/Merge.hpp"
+#include "Core/Read.hpp"
 
 struct K
 {
@@ -45,6 +46,39 @@ struct V
 	}
 };
 
+bool _test_read()
+{
+	auto bt1 = BinaryTree<K, V>();
+
+	for(int i = 0; i < 4096; i++)
+	{
+		bt1.insert(i*2, i*10);
+	}
+
+	printf("Dumping bt1...\n");
+	bt1.dump(fopen("testbt1.dump", "wb"));
+	bt1._free();
+
+	V val;
+
+	int fd = FileIO::openFile("testbt1.dump");
+	int found = findEntry<K, V>(fd, K(44), val);
+
+	if(!found)
+		return false;
+	
+	V ans(220);
+	if(memcmp(&val, &ans, sizeof(V)) != 0)
+		return false;
+
+	found = findEntry<K, V>(fd, K(43), val);
+
+	if(found)
+		return false;
+	
+	return true;
+}
+
 bool _test_merge()
 {
 	V tomb = {0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF};
@@ -79,6 +113,7 @@ bool _test_merge()
 
 int main()
 {
-	_test_merge();
+	if(!_test_read())
+		fprintf(stderr, "Test: Reading from file Failed!\n");
 	return 0;
 }

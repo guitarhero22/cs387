@@ -29,6 +29,7 @@ struct BlkMetaData
 class FileIO
 {
 public:
+	FileIO();
 
 	/**
 	 * @brief Opens a file
@@ -60,6 +61,13 @@ public:
 	 */
 	static size_t fread(void* ptr, size_t size, size_t count, off_t offset, int fileHandle);
 
+	/**
+	 * @brief Returns file size in bytes
+	 * @param fileHandle fileHandle of file
+	 * @return filesize in bytes
+	 */
+	static off_t fsize(int fileHandle);
+
 private:
 
 	/// @brief Internal buffer of blocks
@@ -84,8 +92,17 @@ private:
 	 * @return Index of evicted block in buffer
 	 */
 	static int evictLRU();
-
 };
+
+constexpr std::array<BlkMetaData, MAX_BLK> initialize_array()
+{
+	std::array<BlkMetaData, MAX_BLK> ret{};
+	for (int i = 0; i < MAX_BLK; i++)
+		ret[i].fileHandle = -1;
+	return ret;
+}
+
+
 
 
 
