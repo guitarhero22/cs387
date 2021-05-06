@@ -7,9 +7,14 @@
 #include<stack>
 #include<cmath>
 #include<time.h>
+#include<string>
 #include "files.hpp"
 
 using namespace std;
+
+unsigned char _write_ = 1,
+              _del_ = 2,
+              _sync_ = 3;
 
 template<typename K, typename V>
 class Node{
@@ -24,6 +29,7 @@ class Node{
         int del = 0;
         Node<K, V> *l, *r;
         // ***************** API ********************
+        Node(){};
         Node(K k, V v): 
             key(k), value(v), l(NULL), r(NULL){} //class constructor
 };
@@ -41,6 +47,7 @@ class BinaryTree{
         Node<K,V>* root; //Pointer to the root
         int size = 0; //Number of Nodes
         int traversal_started = 0, sz_k = 0, sz_v = 0;
+        FILE *logfile = NULL;
         stack<Node<K,V>*> stk; // for inorder traversal
         pthread_mutex_t lock;
 
@@ -55,14 +62,23 @@ class BinaryTree{
             #ifdef _DEBUG
                 fprintf(stderr, "Size of Key %d, Size of Value %d\n", sz_k, sz_v);
             #endif
-            // if((sz_v + sz_k) < 20){
-            //     fprintf(stderr, "Combined size of key and value less than timestamp size, functionality not implemented");
-            //     exit(1);
-            // }
         }
+
         BinaryTree(): 
             sz_k(sizeof(K)), sz_v(sizeof(V)), root(NULL)
             {check();}
+
+        BinaryTree(string _logfile, bool load): 
+            sz_k(sizeof(K)), sz_v(sizeof(V)), root(NULL)
+            {   /* Provide a file name to be used as log
+                  and use 
+                */
+                if(load){
+
+                }else{
+                    logfile = fopen(_logfile.c_str(), "wb");
+                }
+            }
 
         BinaryTree(Node<K,V> n):
             sz_k(sizeof(K)), sz_v(sizeof(V))
@@ -78,9 +94,10 @@ class BinaryTree{
             }
 
         //internal helper function / not to be used
+        void log_action(K k, V v, unsigned char act);
         Node<K,V>* _search(K); 
 
-        /* ************************** API ********************* */
+        /* ************************** API **********************/
         Node<K,V>* search(K); //search for a Key 
         int insert(K,V); //insert a Key, Value pair passed as an argumrnt
         int insert(Node<K,V>); //insert a Node containing the key and value
@@ -103,11 +120,16 @@ class BinaryTree{
 //         int del(K);
 //         int del(Node<K,V>*)
 // };
-
-#endif
-
-#ifndef INCLUDE_BTREESRC
-#define INCLUDE_BTREESRC
+template<typename K, typename V>
+void BinaryTree<K,V>::log_action(K k, V v, unsigned char act){
+            //internal function will write logs to logfile
+            if(logfile == NULL) return;
+            fwrite(&act, sizeof(unsigned char), 1, logfile);
+            fwrite(&k, 1, sz_k, logfile);
+            fwrite(&v, 1, sz_v, logfile);
+            fflush(logfile);
+            return;
+}
 
 template<typename K, typename V>
 Node<K,V>* BinaryTree<K,V>::_search(K k){
@@ -165,7 +187,7 @@ int BinaryTree<K,V>::insert(K k, V v){
         p -> value = v;
         p -> del = 0;
     }
-
+    log_action(k, v, _write_);
     pthread_mutex_unlock(&lock);
     return 0;
 }
@@ -177,14 +199,16 @@ int BinaryTree<K,V>::insert(Node<K,V> n){
 
 template<typename K, typename V>
 int BinaryTree<K,V>::del(K k){
-    pthread_mutex_lock(&lock);
     Node<K,V> *n = this->search(k);
+    pthread_mutex_lock(&lock);
     if(n == NULL) {
         pthread_mutex_unlock(&lock);
         return -1;
     }
     n -> del = 1;
     memset(&(n -> value), 0, sz_v); //setting the value of the Value 0000...00000 for marking as delete
+    Node<K,V> dummy;
+    log_action(k, dummy.V, _del_);
     pthread_mutex_unlock(&lock);
     return 0;
 }
@@ -272,7 +296,10 @@ int BinaryTree<K,V>::dump(FILE *f){
         }
     }
     traversal_started = 0;
+    fflush(f);
     fclose(f);
+    Node<K,V> dummy;
+    log_action(dummy.key, dummy.value, _sync_);
     free(time_str);
     pthread_mutex_unlock(&lock);
     return 0;

@@ -21,7 +21,7 @@ int main(){
     auto bt1 = BinaryTree<K, V>();
 
     //*******************************************
-    auto bt = BinaryTree<int, int>();
+    auto bt = BinaryTree<int, int>("logactions.log", 0);
     bt.insert(1, 0);
     bt.insert(4, 0);
     bt.insert(2, 0);
