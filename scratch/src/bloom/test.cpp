@@ -32,8 +32,5 @@ int main(){
         printf("k2 may be present\n");
     else
         printf("k2 not present\n");
-
-
-    
     //*******************************************
 }

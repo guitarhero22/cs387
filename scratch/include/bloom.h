@@ -13,7 +13,11 @@ class Bloom{
                 fprintf(stderr, "Key of Size less than 48 not allowed in Bloom filter");
             }
         }
+
         void set(K k){
+            /*
+                Pass a key to set the corresponding bits 1 in the bloom array
+            */
             unsigned short *s = (unsigned short *)&k;
             for(int i = 0; i<3; ++i){
                 s += i*16;
@@ -22,6 +26,9 @@ class Bloom{
             return;
         };
         bool get(K k){
+            /*
+                Pass a key to find out whether the key is present
+            */
             unsigned short *s = (unsigned short *)&k;
             for(int i = 0; i<3; ++i){
                 s += i*16;
