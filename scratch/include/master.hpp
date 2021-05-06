@@ -3,6 +3,7 @@
 #include "Core/Merge.hpp"
 #include <thread>
 #include <mutex>
+#include <filesystem>
 
 using namespace std;
 
@@ -22,10 +23,10 @@ class Master{
 	BloomFile <K> *bloom;
 	mutex memlock, fslock;
 	int recent, current;
-	FILE* filesys[10];
-	FILE* backups[2];
-	FILE* bloomdump;
-	FILE* tempfile;
+	string filesys[10];
+	string backups[2];
+	string bloomdump;
+	string tempfile;
 	
 	pair<K, V> dbread(K k);
 	void dbwrite(K k, V v);
