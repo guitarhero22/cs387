@@ -7,6 +7,7 @@
 #include<stack>
 #include<cmath>
 #include<time.h>
+#include<pthread.h>
 #include "files.h"
 
 using namespace std;
@@ -42,6 +43,7 @@ class BinaryTree{
         int size = 0; //Number of Nodes
         int traversal_started = 0, sz_k = 0, sz_v = 0;
         stack<Node<K,V>*> stk; // for inorder traversal
+        pthread_mutex_t lock;
 
         // Constructors ******************
         void check(){
@@ -112,15 +114,15 @@ template<typename K, typename V>
 Node<K,V>* BinaryTree<K,V>::_search(K k){
     Node<K,V> *cur = this->root;
     while(cur != NULL){
-        if(k < cur->key){
+        if(k < (cur->key)){
             if(cur -> l != NULL){
                 cur = cur -> l;
             }else{
                 return cur;
             }
         }
-        else if(cur->key < k){
-            if(cur -> r != NULL){
+        else if((cur->key) < k){
+            if((cur->r) != NULL){
                 cur = cur -> r;
             }else{
                 return cur;
@@ -134,19 +136,22 @@ Node<K,V>* BinaryTree<K,V>::_search(K k){
 
 template<typename K, typename V>
 Node<K,V>* BinaryTree<K,V>::search(K k){
+    pthread_mutex_lock(&lock);
     Node<K,V> *n = this->_search(k);
-    if(n == NULL) return NULL;
-    if(n -> key == k) return n;
-    return NULL;
+    if(n -> key != k) n = NULL;
+    pthread_mutex_unlock(&lock);
+    return n;
 }
 
 template<typename K, typename V>
 int BinaryTree<K,V>::insert(K k, V v){
 
+    pthread_mutex_lock(&lock);
     Node<K,V>* p = this->_search(k);
     if(p == NULL){
         this->root = new Node<K,V>(k,v);
         this->size ++;
+        pthread_mutex_unlock(&lock);
         return 0;
     }
 
@@ -162,6 +167,7 @@ int BinaryTree<K,V>::insert(K k, V v){
         p -> del = 0;
     }
 
+    pthread_mutex_unlock(&lock);
     return 0;
 }
 
@@ -172,10 +178,15 @@ int BinaryTree<K,V>::insert(Node<K,V> n){
 
 template<typename K, typename V>
 int BinaryTree<K,V>::del(K k){
+    pthread_mutex_lock(&lock);
     Node<K,V> *n = this->search(k);
-    if(n == NULL) return -1;
+    if(n == NULL) {
+        pthread_mutex_unlock(&lock);
+        return -1;
+    }
     n -> del = 1;
     memset(&(n -> value), 0, sz_v); //setting the value of the Value 0000...00000 for marking as delete
+    pthread_mutex_unlock(&lock);
     return 0;
 }
 
@@ -187,6 +198,7 @@ int BinaryTree<K,V>::del(Node<K,V> *n){
 template<typename K, typename V>
 Node<K,V>* BinaryTree<K,V>::_inorder(){
     //Under DEV TODO
+    pthread_mutex_lock(&lock);
     if(!traversal_started){
         traversal_started = 1;
         while(!stk.empty()) stk.pop();
@@ -198,6 +210,7 @@ Node<K,V>* BinaryTree<K,V>::_inorder(){
     }
     if(stk.empty() && traversal_started){
         traversal_started = 0;
+        pthread_mutex_unlock(&lock);
         return NULL;
     }
 
@@ -208,12 +221,14 @@ Node<K,V>* BinaryTree<K,V>::_inorder(){
         stk.push(n1);
         n1 = n1 -> l;
     }
+    pthread_mutex_unlock(&lock);
     return n; 
 }
 
 template<typename K, typename V>
 int BinaryTree<K,V>::dump(FILE *f){
     /* Dumps the tree content in a file */
+    pthread_mutex_lock(&lock);
     traversal_started = 1;
     while(!stk.empty()) stk.pop();
     Node<K,V>* n = root;
@@ -260,11 +275,13 @@ int BinaryTree<K,V>::dump(FILE *f){
     traversal_started = 0;
     fclose(f);
     free(time_str);
+    pthread_mutex_unlock(&lock);
     return 0;
 }
 
 template<typename K, typename V>
 void BinaryTree<K,V>::_free(){
+    pthread_mutex_lock(&lock);
     traversal_started = 1;
     while(!stk.empty()) stk.pop();
     Node<K,V>* n = root;
@@ -287,6 +304,7 @@ void BinaryTree<K,V>::_free(){
     root = NULL;
     size = 0;
     traversal_started = 0;
+    pthread_mutex_unlock(&lock);
     return;
 }
 
