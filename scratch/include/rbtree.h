@@ -1,3 +1,6 @@
+#ifndef __RBTREE_H__
+#define __RBTREE_H__
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<vector>
@@ -261,3 +264,4 @@ int BinaryTree<K,V>::dump(FILE *f){
 }
 
 #endif
+#endif // __RBTREE_H__
