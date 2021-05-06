@@ -3,7 +3,10 @@
 #include "Core/Merge.hpp"
 #include <thread>
 #include <mutex>
+#include <fstream>
 #include <filesystem>
+
+#define NUMFILES 10
 
 using namespace std;
 
@@ -23,7 +26,7 @@ class Master{
 	BloomFile <K> *bloom;
 	mutex memlock, fslock;
 	int recent, current;
-	string filesys[10];
+	string filesys[NUMFILES];
 	string backups[2];
 	string bloomdump;
 	string tempfile;
