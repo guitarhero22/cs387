@@ -18,13 +18,14 @@ unsigned char _write_ = 1,
               _del_ = 2,
               _sync_ = 3;
 
+/** 
+ * @brief Node for the In Memory Trees
+ * @tparam K - Key Typeshould have a < and == operator defined on them
+ * @tparam V - Value Type
+ */
 template<typename K, typename V>
-class Node{
-    /* 
-        K - Key Type
-        V - Value Type
-        K should have a < and == operator defined on them
-    */
+class Node
+{
     public:
         K key;
         V value;
@@ -32,19 +33,17 @@ class Node{
         Node<K, V> *l, *r;
         // ***************** API ********************
         Node(){};
-        Node(K k, V v): 
-            key(k), value(v), l(NULL), r(NULL){} //class constructor
+        Node(K k, V v): key(k), value(v), l(NULL), r(NULL){}
 };
 
+/** 
+  * @tparam K - Key Type
+  * @tparam V - Value Type
+  * @param K should have a < and == operator defined on them \
+        For K use something like struct **K{char data[64];};** OR class **K{public: data[64];};**
+*/
 template<typename K, typename V>
 class BinaryTree{
-    /* 
-        K - Key Type
-        V - Value Type
-        K should have a < and == operator defined on them
-
-        For K use something like struct **K{char data[64];};** OR class **K{public: data[64];};**
-    */
     public:
         Node<K,V>* root; //Pointer to the root
         int size = 0; //Number of Nodes
@@ -54,46 +53,34 @@ class BinaryTree{
         // pthread_mutex_t lock;
 
         // Constructors ******************
-        void check(){
-            float f = BLK_SIZE * 1.0 / (sz_k + sz_v);
-            if(floor(f) != f){
-                fprintf(stderr, "Key and Value size not consistent with block size");
-                exit(1);
-            }
-
-            #ifdef _DEBUG
-                fprintf(stderr, "Size of Key %d, Size of Value %d\n", sz_k, sz_v);
-            #endif
-        }
-
+        void check(); // internal function
+        void fromFile(string); //loads the Binary Tree from File
         BinaryTree(): 
             sz_k(sizeof(K)), sz_v(sizeof(V)), root(NULL)
             {check();}
 
         BinaryTree(string _logfile, bool load): 
             sz_k(sizeof(K)), sz_v(sizeof(V)), root(NULL)
-            {   /* Provide a file name to be used as log
-                  and use 
-                */
-                if(load){
+        {   
+            if(load){
 
-                }else{
-                    logfile = fopen(_logfile.c_str(), "wb");
-                }
+            }else{
+                logfile = fopen(_logfile.c_str(), "wb");
             }
+        }
 
         BinaryTree(Node<K,V> n):
             sz_k(sizeof(K)), sz_v(sizeof(V))
-            { //class constructor
-                this->root = new Node<K,V>(); 
-                *this->root = n;
-            }
+        {
+            this->root = new Node<K,V>(); 
+            *this->root = n;
+        }
 
         BinaryTree(K k, V v):
             sz_k(sizeof(K)), sz_v(sizeof(V))
-            { //class constructor
-                this->root = new Node<K,V>(k, v);
-            }
+        {
+            this->root = new Node<K,V>(k, v);
+        }
 
         //internal helper function / not to be used
         void log_action(K k, V v, unsigned char act);
@@ -114,27 +101,49 @@ class BinaryTree{
         Node<K,V>* _inorder();//inorder travversal of the tree for traversal
 };
 
-// template<typename K, typename V>
-// class  RBTree{
-//     public:
-//         Node<K,V>* search(K);
-//         Node<K,V>* insert(K);
-//         int del(K);
-//         int del(Node<K,V>*)
-// };
 template<typename K, typename V>
-void BinaryTree<K,V>::log_action(K k, V v, unsigned char act){
-            //internal function will write logs to logfile
-            if(logfile == NULL) return;
-            fwrite(&act, sizeof(unsigned char), 1, logfile);
-            fwrite(&k, 1, sz_k, logfile);
-            fwrite(&v, 1, sz_v, logfile);
-            fflush(logfile);
-            return;
+void BinaryTree<K,V>::fromFile(string fname)
+{
+    FILE *backup = fopen(fname.c_str(), "rb");
+    if(backup == NULL)
+    {
+        fprintf(stderr, "File Not Found!");
+        exit(1);
+    }
+    _free();
+    int entry_size = sz_k + sz_v + 1;
+    root = NULL;
+    return;
 }
 
 template<typename K, typename V>
-Node<K,V>* BinaryTree<K,V>::_search(K k){
+void BinaryTree<K,V>::check()
+{
+    float f = BLK_SIZE * 1.0 / (sz_k + sz_v);
+    if(floor(f) != f)
+    {
+        fprintf(stderr, "Key and Value size not consistent with block size");
+        exit(1);
+    }
+    #ifdef _DEBUG
+        fprintf(stderr, "Size of Key %d, Size of Value %d\n", sz_k, sz_v);
+    #endif
+}
+
+template<typename K, typename V>
+void BinaryTree<K,V>::log_action(K k, V v, unsigned char act)
+{
+    if(logfile == NULL) return;
+    fwrite(&act, sizeof(unsigned char), 1, logfile);
+    fwrite(&k, 1, sz_k, logfile);
+    fwrite(&v, 1, sz_v, logfile);
+    fflush(logfile);
+    return;
+}
+
+template<typename K, typename V>
+Node<K,V>* BinaryTree<K,V>::_search(K k)
+{
     Node<K,V> *cur = this->root;
     while(cur != NULL){
         if(k < (cur->key)){
