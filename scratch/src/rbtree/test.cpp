@@ -21,7 +21,7 @@ int main(){
     auto bt1 = BinaryTree<K, V>();
 
     //*******************************************
-    auto bt = BinaryTree<int, int>("logactions.log", 0);
+    auto bt = BinaryTree<long long, long long>("logactions.log", 0);
     bt.insert(1, 0);
     bt.insert(4, 0);
     bt.insert(2, 0);
@@ -30,7 +30,7 @@ int main(){
     bt.insert(3, 0);
     auto k = bt._inorder();
     while(k != NULL){
-        printf("%d\n", k -> key);
+        printf("%lld\n", k -> key);
         k = bt._inorder();
     }
 
@@ -38,13 +38,15 @@ int main(){
     bt._free();
     k = bt._inorder();
     while(k != NULL){
-        printf("%d\n", k -> key);
+        printf("%lld\n", k -> key);
         k = bt._inorder();
     }
 
+    bt.dump(fopen("test1.dump", "wb"));
+
     // test file dump, date etc.
     printf("Dumping bt1...\n");
-    bt1.dump(fopen("test.dump", "w"));
+    bt1.dump(fopen("test.dump", "wb"));
     printf("Freeing bt1 ...\n");
     bt1._free();
 
