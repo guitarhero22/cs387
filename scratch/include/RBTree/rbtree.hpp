@@ -232,7 +232,8 @@ template<typename K, typename V>
 Node<K,V>* BinaryTree<K,V>::search(K k){
     // pthread_mutex_lock(&lock);
     Node<K,V> *n = this->_search(k);
-    if(n -> key != k) n = NULL;
+    if(n != NULL)
+        if(n -> key != k) n = NULL;
     // pthread_mutex_unlock(&lock);
     return n;
 }
