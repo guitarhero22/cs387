@@ -8,6 +8,7 @@
 #include<cmath>
 #include<time.h>
 #include<string>
+#include<string.h>
 #include "files.hpp"
 #include "utils.hpp"
 #include <pthread.h>
@@ -49,24 +50,22 @@ class BinaryTree{
         int size = 0; //Number of Nodes
         int traversal_started = 0, sz_k = 0, sz_v = 0;
         FILE *logfile = NULL;
+        string logfilename = "";
         stack<Node<K,V>*> stk; // for inorder traversal
         // pthread_mutex_t lock;
 
         // Constructors ******************
         void check(); // internal function
         void fromFile(string); //loads the Binary Tree from File
+        void setLogFile(string); //sets a new logfile
         BinaryTree(): 
             sz_k(sizeof(K)), sz_v(sizeof(V)), root(NULL)
             {check();}
 
-        BinaryTree(string _logfile, bool load): 
+        BinaryTree(string _logfile): 
             sz_k(sizeof(K)), sz_v(sizeof(V)), root(NULL)
-        {   
-            if(load){
-
-            }else{
-                logfile = fopen(_logfile.c_str(), "wb");
-            }
+        {  
+            setLogFile(_logfile);
         }
 
         BinaryTree(Node<K,V> n):
@@ -102,17 +101,70 @@ class BinaryTree{
 };
 
 template<typename K, typename V>
+void BinaryTree<K,V>::setLogFile(string _logfile)
+{
+    logfilename = _logfile;
+    logfile = fopen(_logfile.c_str(), "wb");
+}
+
+template<typename K, typename V>
 void BinaryTree<K,V>::fromFile(string fname)
 {
+    if(fname == logfilename){
+        fprintf(stderr, "log filenmae same as backup file\n");
+        if(logfile != NULL) fclose(logfile);
+        char *log_str = (char*) malloc(30);
+        strcpy(log_str, "backup-");
+        time_t now = time(0);
+        tm tstruct = *localtime(&now);
+        tstruct = *localtime(&now);
+        strftime(log_str + 7, 20, TIME_FMT, &tstruct);
+        fprintf(stderr, "Using the following name instead: %s\n", log_str);
+        setLogFile(string(log_str));
+    }
     FILE *backup = fopen(fname.c_str(), "rb");
     if(backup == NULL)
     {
-        fprintf(stderr, "File Not Found!");
+        fprintf(stderr, "BinaryTree Backup File Not Found!\n");
         exit(1);
     }
     _free();
     int entry_size = sz_k + sz_v + 1;
-    root = NULL;
+    long int start = ftell(backup);
+    fseek(backup, 0, SEEK_END);
+    float num_entries = 1.0 * (ftell(backup) - start) / (entry_size);
+    if(floor(num_entries) != num_entries){
+        fprintf(stderr, "Backup File Corrupted!\n");
+        exit(1);
+    }
+    unsigned char * buff = (unsigned char *) malloc(entry_size + 1);
+    bool found_sync = false;
+    while(ftell(backup) > start && !found_sync){
+        fseek(backup, -entry_size, SEEK_CUR);
+        fread(buff, entry_size, 1, backup);
+        fseek(backup, -entry_size, SEEK_CUR);
+        if(*((unsigned char *) buff) == _sync_){
+            found_sync = true;
+            #ifdef _DEBUG
+                fprintf(stderr, "Backup Restore: Found _sync_\n");
+            #endif
+        }
+    }
+    if(found_sync) fseek(backup, entry_size, SEEK_CUR);
+    while(!feof(backup)){
+        fread(buff, entry_size, 1, backup);
+        if(*(unsigned char*) buff == _write_)
+        {
+            insert(*(K *)(buff + 1), *(V *)(buff + 1 + sz_k));
+        }
+        else if(*(unsigned char*) buff == _del_){
+            del(*(K *)(buff + 1));
+        }else{
+            #ifdef _DEBUG
+                fprintf(stderr, "No actions in backup entry\n");
+            #endif
+        }
+    }
     return;
 }
 
@@ -183,6 +235,7 @@ int BinaryTree<K,V>::insert(K k, V v){
     if(p == NULL){
         this->root = new Node<K,V>(k,v);
         this->size ++;
+        log_action(k, v, _write_);
         // pthread_mutex_unlock(&lock);
         return 0;
     }
@@ -219,7 +272,7 @@ int BinaryTree<K,V>::del(K k){
     n -> del = 1;
     memset(&(n -> value), TOMBSTONE_BYTE, sz_v); //setting the value of the Value 0000...00000 for marking as delete
     Node<K,V> dummy;
-    log_action(k, dummy.V, _del_);
+    log_action(k, dummy.value, _del_);
     // pthread_mutex_unlock(&lock);
     return 0;
 }
