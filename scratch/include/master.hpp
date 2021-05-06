@@ -22,6 +22,10 @@ class Master{
 	BloomFile <K> *bloom;
 	mutex memlock, fslock;
 	int recent, current;
+	FILE* filesys[10];
+	FILE* backups[2];
+	FILE* bloomdump;
+	FILE* tempfile;
 	
 	pair<K, V> dbread(K k);
 	void dbwrite(K k, V v);
