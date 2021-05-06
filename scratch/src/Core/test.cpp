@@ -49,7 +49,7 @@ bool _test_merge()
 {
 	V tomb = {0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF};
 
-	auto bt1 = BinaryTree<K, V>("logactions.log", 0);
+	auto bt1 = BinaryTree<K, V>();
 	auto bt2 = BinaryTree<K, V>();
 
 	for(int i = 0; i < 10; i++)
@@ -57,12 +57,15 @@ bool _test_merge()
 		bt1.insert(i*2, i*10);
 	}
 
+	bt1.insert(7, 200);
+
 	for(int i = 0; i < 10; i++)
 	{
 		bt2.insert(i*2+1, i*10+1);
 	}
 
 	bt2.insert(8, tomb);
+	bt2.insert(9, 42);
 
 	printf("Dumping bt1...\n");
 	bt1.dump(fopen("testbt1.dump", "wb"));
