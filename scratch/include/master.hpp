@@ -1,6 +1,7 @@
 #include "RBTree/rbtree.hpp"
 #include "Bloom/bloom.hpp"
 #include "Core/Merge.hpp"
+#include "Core/Read.hpp"
 #include <thread>
 #include <mutex>
 #include <fstream>
@@ -24,14 +25,14 @@ class Master{
 	public:
 	BinaryTree <K, V> *bintree, *reserve;
 	BloomFile <K> *bloom;
-	mutex memlock, fslock, reslock;
+	mutex memlock, fslock;
 	int recent, current;
 	string filesys[NUMFILES];
 	string backups[2];
 	string bloomdump;
 	string tempfile;
 	
-	pair<K, V> dbread(K k);
+	bool dbread(const K& k, V& v);
 	void dbwrite(K k, V v);
 
 	void adjust();

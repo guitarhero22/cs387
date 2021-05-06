@@ -1,5 +1,58 @@
 #include "master.hpp"
 
+bool Master::dbread(const K &k, V &v){
+
+	//what is recent now
+	this->memlock.lock();
+	int r = this->recent;
+
+	//check bloom filter
+	if (!this->bloom->get(k)){
+		this->memlock.unlock();
+		return false;
+	}
+	
+	//check in memory tree, and reserve too, since you hold lock
+	Node<K, V> *n = this->bintree->search(k);
+	Node<K, V> *nr = this->reserve->search(k);
+	this->memlock.unlock();
+	
+	if (n != NULL){
+		
+		memcpy(&v, &n->value, sizeof(V));
+		return true;
+	}
+	if (nr != NULL)
+	{
+
+		memcpy(&v, &nr->value, sizeof(V));
+		return true;
+	}
+
+	//now traverse filesystem
+	for (int i=r; i!=(r+2)%NUMFILES; i=(i-1)%NUMFILES){
+		int fd = FileIO::openFile(filesys[i]);
+		if (findEntry<K, V>(fd, k, v))
+		{
+			return true;
+		}
+	}
+
+	//last two danger files. if recent has been updated,
+	//last is redundant, becuase we already checked reserve too
+	this->fslock.lock();
+	for (int i = (r + 2) % NUMFILES; i != r; i = (i - 1) % NUMFILES)
+	{
+		int fd = FileIO::openFile(filesys[i]);
+		if (findEntry<K, V>(fd, k, v))
+		{
+			return true;
+		}
+	}
+	this->fslock.unlock();
+	return false;
+}
+
 void Master::dbwrite(K k, V v){
 	
 	//acquire the memory lock
@@ -36,8 +89,6 @@ void Master::serve(string batchfile){
 		else{
 			this->memlock.unlock();
 		}
-
-
 	}
 }
 
@@ -88,5 +139,4 @@ void Master::adjust(){
 	//release the file lock
 	this->fslock.unlock();
 
-	
 }
