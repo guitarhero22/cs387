@@ -1,6 +1,7 @@
 #include "BufferManager/FileIO.hpp"
 
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <cstring>
@@ -64,15 +65,15 @@ size_t FileIO::fread(void* ptr, size_t size, size_t count, off_t offset, int fil
 		if(fd < 0 || fd != fileHandle)
 			continue;
 
-		if(blkOff < offset || offset >= blkOff + BLK_SIZE)
+		if(offset < blkOff || offset >= blkOff + BLK_SIZE)
 			continue;
 
 		off_t offsetIntoBlock = offset - blkOff;
 		memcpy(ptr, blk.block + offsetIntoBlock, count * size);
 
-		lruIndexQ.erase(lruIndexMap[i]);
-		lruIndexQ.push_front(i);
-		lruIndexMap[i] = lruIndexQ.begin();
+		lruIndexQ.erase(lruIndexMap[i-1]);
+		lruIndexQ.push_front(i-1);
+		lruIndexMap[i-1] = lruIndexQ.begin();
 
 		return count * size;
 	}
@@ -83,10 +84,11 @@ size_t FileIO::fread(void* ptr, size_t size, size_t count, off_t offset, int fil
 
 	lseek(fileHandle, blkOff, SEEK_SET);
 
-	if(read(fileHandle, buffer[i].block, BLK_SIZE) != BLK_SIZE)
-	{
-		return 0;
-	}
+	int num = read(fileHandle, buffer[i].block, BLK_SIZE);
+	#ifdef _DEBUG
+		if(num != BLK_SIZE)
+			fprintf(stderr, "FileIO::fread() Could only read %d bytes\n", num);
+	#endif
 
 	bufferMetaData[i].offset = blkOff;
 	bufferMetaData[i].fileHandle = fileHandle;
@@ -94,7 +96,7 @@ size_t FileIO::fread(void* ptr, size_t size, size_t count, off_t offset, int fil
 	off_t offsetIntoBlock = offset - blkOff;
 	memcpy(ptr, buffer[i].block + offsetIntoBlock, count * size);
 
-	return count * size;
+	return num;
 }
 
 int FileIO::allocateBlock() 
@@ -136,3 +138,15 @@ int FileIO::evictLRU()
 
 	return toEvict;
 }
+
+off_t FileIO::fsize(int fileHandle) 
+{
+	struct stat fileStat;
+	fstat(fileHandle, &fileStat);
+	return fileStat.st_size;
+}
+
+std::array<Blk, MAX_BLK> FileIO::buffer;
+std::array<BlkMetaData, MAX_BLK> FileIO::bufferMetaData = initialize_array();
+std::list<int> FileIO::lruIndexQ;
+std::unordered_map<int, std::list<int>::iterator> FileIO::lruIndexMap;
