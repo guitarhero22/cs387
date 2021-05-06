@@ -32,7 +32,7 @@ static bool isTomb(V* entryv)
 }
 
 /**
- * @brief Merges two files into a third
+ * @brief Merges two files into a third. All file descriptors are ones that stdio.h fopen() gives us
  * @tparam K entry key type, > operator needs to be overloaded for K
  * @tparam V entry value type
  * @param oldest2 Second oldest file, must be opened in read mode
