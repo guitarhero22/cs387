@@ -370,7 +370,6 @@ int BinaryTree<K,V>::dump(FILE *f){
     }
     traversal_started = 0;
     fflush(f);
-    fclose(f);
     Node<K,V> dummy;
     log_action(dummy.key, dummy.value, _sync_);
     free(time_str);
