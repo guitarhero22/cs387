@@ -9,7 +9,7 @@
  * @brief Find key inside file and return value
  * @tparam K key type, must overload < operator
  * @tparam V value type
- * @param fileHandle fileHandle for file, given by FileIO class
+ * @param fileHandle fileHandle for file, must be given by FileIO::fopen()
  * @param key Search key
  * @param value Value returned by reference
  * @return true if key found, false otherwise

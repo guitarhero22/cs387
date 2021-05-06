@@ -98,13 +98,22 @@ class BinaryTree{
         int dump(FILE*);//dumps the tree in the given file and empties the tree
         void _free();//empties the whole tree
         Node<K,V>* _inorder();//inorder travversal of the tree for traversal
+        ~BinaryTree()
+        {
+            setLogFile("");
+        }
 };
 
 template<typename K, typename V>
 void BinaryTree<K,V>::setLogFile(string _logfile)
 {
     logfilename = _logfile;
+    if(logfile != NULL) fclose(logfile);
+    if(logfilename == "") return;
     logfile = fopen(_logfile.c_str(), "wb");
+    if(logfile == NULL){
+        fprintf(stderr, "Couldn't backup create file!\n");
+    }
 }
 
 template<typename K, typename V>
@@ -112,7 +121,6 @@ void BinaryTree<K,V>::fromFile(string fname)
 {
     if(fname == logfilename){
         fprintf(stderr, "log filenmae same as backup file\n");
-        if(logfile != NULL) fclose(logfile);
         char *log_str = (char*) malloc(30);
         strcpy(log_str, "backup-");
         time_t now = time(0);
@@ -165,6 +173,7 @@ void BinaryTree<K,V>::fromFile(string fname)
             #endif
         }
     }
+    if(backup != NULL) fclose(backup);
     return;
 }
 
@@ -361,7 +370,6 @@ int BinaryTree<K,V>::dump(FILE *f){
     }
     traversal_started = 0;
     fflush(f);
-    fclose(f);
     Node<K,V> dummy;
     log_action(dummy.key, dummy.value, _sync_);
     free(time_str);

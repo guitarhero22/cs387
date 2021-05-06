@@ -161,17 +161,6 @@ class BloomFile{
         ~BloomFile(){
             if(bloomwrite != NULL)
                 fclose(bloomwrite);
-            // #ifdef _DEBUG
-            //     for(int i = 0; i < (1 << 16)/8; ++i){
-            //         if(arr[i] == 0)
-            //             fprintf(stderr, "0 ");
-            //         else if(arr[i] == (1 << 8) - 1)
-            //             fprintf(stderr, "1 ");
-            //         else
-            //             fprintf(stderr, "2 ");
-            //     }
-            //     fprintf(stderr, "\n");
-            // #endif
         }
 };
 
