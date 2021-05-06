@@ -1,4 +1,4 @@
-#include "../../include/BufferManager/FileIO.hpp"
+#include "BufferManager/FileIO.hpp"
 
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -21,8 +21,14 @@ void FileIO::closeFile(int fileHandle)
 	unsigned int i = 0;
 	for(auto &blk: buffer)
 	{
-		bufferMetaData[i].offset = 0;
-		bufferMetaData[i].fileHandle = -1;
+		if(bufferMetaData[i].fileHandle == fileHandle)
+		{
+			bufferMetaData[i].offset = 0;
+			bufferMetaData[i].fileHandle = -1;
+
+			lruIndexQ.erase(lruIndexMap[i]);
+			lruIndexMap.erase(i);
+		}
 		i++;
 	}
 
