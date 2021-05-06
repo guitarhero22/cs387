@@ -141,6 +141,17 @@ void Master::adjust(){
 
 }
 
+void Master::run(vector <string> batchfiles){
+	int numthreads = batchfiles.size();
+	vector <thread> threads;
+	for (int i=0; i<numthreads; i++){
+		threads.push_back(thread(serve, batchfiles[i])); 
+	}
+
+	for (auto &t : threads)
+		t.join();
+}
+
 Master::Master(){
 
 	//assumes that file<i> begins with a timestamp
@@ -188,4 +199,22 @@ Master::Master(){
 	}
 
 	recent = candidate;
+
+	//write backups, if any, to file
+
+	for (int i=0; i<2; i++){
+		this->reserve = new BinaryTree<K, V>(tempfile);
+		current = (i+1)%2; 
+		//ensures the erase current(i+1)%2 step in adjust() gets rid of the used backup
+		this->reserve->fromFile(backups[i]);
+		
+		adjust();
+
+	}
+
+	current = 0;
+	this->bintree = new BinaryTree<K, V>(backups[0]);
+
+	//boot Bloom
+	this->bloom = new BloomFile<K>(bloomdump, false, true);
 }
