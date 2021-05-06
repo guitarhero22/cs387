@@ -1,5 +1,46 @@
 #include "master.hpp"
 
+void Master::dbwrite(K k, V v){
+	
+	//acquire the memory lock
+	this->memlock.lock();
+
+	//write to memory and backup
+	this->bintree->insert(k, v);
+
+	//write to Bloom
+	this->bloom->set(k);
+
+	//release the memory lock
+	this->memlock.unlock();
+}
+
+void Master::serve(string batchfile){
+	//TODO: figure out a way to read and parse batchfile neatly
+	while(1){
+		//condition to be replaced with (getline) or sth
+
+		this->memlock.lock();
+		
+		//call whatever read/write
+
+		
+		if (this->bintree->size >= 2048 && this->reserve->size == 0){
+		
+			this->reserve = this->bintree;
+			this->current = (this->current + 1)%2;
+			this->bintree = new BinaryTree<K, V>(backups[current]);
+			this->memlock.unlock();
+			thread (adjust).detach();
+		}
+		else{
+			this->memlock.unlock();
+		}
+
+
+	}
+}
+
 void Master::adjust(){
 	
 	//acquire the file lock
@@ -34,11 +75,18 @@ void Master::adjust(){
 	fclose(f);
 
 	//update recent
+	this->memlock.lock();
 	this->recent = (this->recent + 1)%NUMFILES;
 
 	//clear the contents of the old backup
 	filesystem::resize_file(backups[(this->current+1)%2], 0);
 
+	//can finally reclaim memory
+	delete this->reserve;
+	this->memlock.unlock();
+
 	//release the file lock
 	this->fslock.unlock();
+
+	
 }
