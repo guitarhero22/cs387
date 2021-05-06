@@ -5,4 +5,7 @@
 
 typedef uint8_t byte;
 
+#define TIME_FMT "%Y-%m-%d.%X"
+#define TOMBSTONE_BYTE 0xFF
+
 #endif // __UTILS_H__

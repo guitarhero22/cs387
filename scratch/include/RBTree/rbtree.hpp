@@ -8,6 +8,7 @@
 #include<cmath>
 #include<time.h>
 #include "files.hpp"
+#include "utils.hpp"
 
 using namespace std;
 
@@ -231,7 +232,7 @@ int BinaryTree<K,V>::dump(FILE *f){
     time_t now = time(0);
     tm tstruct = *localtime(&now);
     tstruct = *localtime(&now);
-    strftime(time_str, 20, "%Y-%m-%d.%X", &tstruct);
+    strftime(time_str, 20, TIME_FMT, &tstruct);
     time_str[19] = '0';
     #ifdef _DEBUG
         fprintf(stderr, "Check the time: %s\n", time_str);
