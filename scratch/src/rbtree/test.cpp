@@ -5,11 +5,11 @@ using namespace std;
 
 //    Use K and V as follows
 struct K{
-    char c[64];
+    char c[16];
 };
 
 struct V{
-    char c[64];
+    char c[16];
 };
 
 char buf[64];
@@ -34,10 +34,27 @@ int main(){
         k = bt._inorder();
     }
 
+    //test whether the tree is freed
+    bt._free();
+    k = bt._inorder();
+    while(k != NULL){
+        printf("%d\n", k -> key);
+        k = bt._inorder();
+    }
+
+    // test file dump, date etc.
+    printf("Dumping bt1...\n");
+    bt1.dump(fopen("test.dump", "w"));
+    printf("Freeing bt1 ...\n");
+    bt1._free();
+
     // Get current date/time, format is YYYY-MM-DD.HH:mm:ss
-    time_t now = time(0);
-    tm tstruct = *localtime(&now);
-    tstruct = *localtime(&now);
-    strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
-    printf("%s\n", buf);
+    // time_t now = time(0);
+    // tm tstruct = *localtime(&now);
+    // tstruct = *localtime(&now);
+    // for(int i=0; i<64; ++i) buf[i] = '0';
+    // strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
+    // buf[19] = ' ';
+    // buf[63] = '\0';
+    // printf("%s\n", buf);
 }
