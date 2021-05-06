@@ -16,7 +16,8 @@ char buf[64];
 int main(){
     printf("Testing bloom...\n");
     //******************************************* 
-    Bloom<K> bloom;
+    printf("Test 1...\n");
+    Bloom<K> bloom(0);
 
     K k1, k2;
     for(int i=0; i<64; ++i) k1.c[i] = '0';
@@ -32,5 +33,18 @@ int main(){
         printf("k2 may be present\n");
     else
         printf("k2 not present\n");
+
     //*******************************************
+    printf("Test2 ......\n");
+    Bloom<K> bloom1(1);
+
+    if(bloom1.get(k1))
+        printf("k1 may be present\n");
+    else
+        printf("k1 not present\n");
+
+    if(bloom1.get(k2))
+        printf("k2 may be present\n");
+    else
+        printf("k2 not present\n");
 }
