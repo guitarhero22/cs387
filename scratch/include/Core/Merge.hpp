@@ -8,7 +8,7 @@
 #include <string>
 #include <cstring>
 
-static byte tombByte[] = {TOMBSTONE_BYTE}; 
+static byte tombByte[] = {TOMBSTONE_BYTE};
 
 /**
  * @brief Checks if the value is a tombstone
@@ -23,7 +23,7 @@ static bool isTomb(V* entryv)
 	size_t sz_v = sizeof(V);
 	for(int i = 0; i < sz_v; i++)
 	{
-		if(memcmp(entryv + i, tombByte, 1) != 0)
+		if(memcmp((byte*)entryv + i, tombByte, 1) != 0)
 		{
 			return false;
 		}
@@ -81,7 +81,7 @@ void merge_files(FILE* oldest2, FILE* oldest1, FILE* newfd)
 	fread(&entry1k, sz_k, 1, oldest1);
 	fread(&entry1v, sz_v, 1, oldest1);
 	fread(&entry2k, sz_k, 1, oldest2);
-	fread(&entry2k, sz_v, 1, oldest2);
+	fread(&entry2v, sz_v, 1, oldest2);
 
 	while(1)
 	{
@@ -111,10 +111,10 @@ void merge_files(FILE* oldest2, FILE* oldest1, FILE* newfd)
 		}
 		else
 		{
-			if(!isTomb(&entry1v))
+			if(!isTomb(&entry2v))
 			{
-				fwrite(&entry1k, sz_k, 1, newfd);
-				fwrite(&entry1v, sz_v, 1, newfd);
+				fwrite(&entry2k, sz_k, 1, newfd);
+				fwrite(&entry2v, sz_v, 1, newfd);
 			}
 
 			fread(&entry1k, sz_k, 1, oldest1);
@@ -137,9 +137,6 @@ void merge_files(FILE* oldest2, FILE* oldest1, FILE* newfd)
 		fread(&entry1k, sz_k, 1, oldest1);
 		fread(&entry1v, sz_v, 1, oldest1);
 
-		if(feof(oldest1))
-			break;
-
 		if(!isTomb(&entry1v))
 		{
 			fwrite(&entry1k, sz_k, 1, newfd);
@@ -154,9 +151,6 @@ void merge_files(FILE* oldest2, FILE* oldest1, FILE* newfd)
 		
 		fread(&entry2k, sz_k, 1, oldest2);
 		fread(&entry2v, sz_v, 1, oldest2);
-
-		if(feof(oldest2))
-			break;
 
 		if(!isTomb(&entry2v))
 		{
