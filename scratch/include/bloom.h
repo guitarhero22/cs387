@@ -3,15 +3,22 @@
 
 #include<stdlib.h>
 #include<stdio.h>
+#include<cstring>
+
+using namespace std;
 
 template<typename K> // provide Key Type for class template
 class Bloom{
     public:
         unsigned char arr[(1 << 16) / 8];
-        Bloom(){
+        Bloom(bool initial){
             if(sizeof(K) < 48){
                 fprintf(stderr, "Key of Size less than 48 not allowed in Bloom filter");
             }
+            if(!initial)
+                memset(arr, 0, ((1 << 16) / 8));
+            else
+                memset(arr, (1 << 8) - 1, ((1 << 16) / 8));
         }
 
         void set(K k){
@@ -25,6 +32,7 @@ class Bloom{
             }
             return;
         };
+
         bool get(K k){
             /*
                 Pass a key to find out whether the key is present
