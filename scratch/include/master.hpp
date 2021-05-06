@@ -24,7 +24,7 @@ class Master{
 	public:
 	BinaryTree <K, V> *bintree, *reserve;
 	BloomFile <K> *bloom;
-	mutex memlock, fslock;
+	mutex memlock, fslock, reslock;
 	int recent, current;
 	string filesys[NUMFILES];
 	string backups[2];
