@@ -1,3 +1,6 @@
+#ifndef __RBTREE_H__
+#define __RBTREE_H__
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<vector>
@@ -5,9 +8,6 @@
 #include<cmath>
 #include<time.h>
 #include "files.h"
-
-#ifndef INCLUDE_RBTREE
-#define INCLUDE_RBTREE
 
 using namespace std;
 
