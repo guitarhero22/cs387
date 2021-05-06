@@ -129,6 +129,7 @@ void BinaryTree<K,V>::fromFile(string fname)
         strftime(log_str + 7, 20, TIME_FMT, &tstruct);
         fprintf(stderr, "Using the following name instead: %s\n", log_str);
         setLogFile(string(log_str));
+        free(log_str);
     }
     FILE *backup = fopen(fname.c_str(), "rb");
     if(backup == NULL)
