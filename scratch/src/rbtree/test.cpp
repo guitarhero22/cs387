@@ -21,7 +21,7 @@ int main(){
     auto bt1 = BinaryTree<K, V>();
 
     //*******************************************
-    auto bt = BinaryTree<long long, long long>("logactions.log", 0);
+    auto bt = BinaryTree<long long, long long>("logactions.log");
     bt.insert(1, 0);
     bt.insert(4, 0);
     bt.insert(2, 0);
@@ -42,6 +42,13 @@ int main(){
         k = bt._inorder();
     }
 
+    printf("Testing Recovery from Logfile...\n");
+    bt.fromFile("logactions.log");
+    k = bt._inorder();
+    while(k != NULL){
+        printf("%lld\n", k -> key);
+        k = bt._inorder();
+    }
     bt.dump(fopen("test1.dump", "wb"));
 
     // test file dump, date etc.
