@@ -10,9 +10,8 @@ int FileIO::openFile(const std::string& filePath)
 	/**
 	 * O_RDWR Open for reading and writing
 	 * O_SYNC Will write to disk before returning
-	 * O_DIRECT Use DMA, don't use file cache as we have our own buffer
 	 */
-	return open(filePath.c_str(), O_RDWR | O_SYNC | O_DIRECT);
+	return open(filePath.c_str(), O_RDWR | O_SYNC);
 }
 
 void FileIO::closeFile(int fileHandle)
