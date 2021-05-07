@@ -135,30 +135,30 @@ void merge_files(FILE* oldest2, FILE* oldest1, FILE* newfd)
 		{
 			if(feof(oldest1))
 				break;
-			
-			fread(&entry1k, sz_k, 1, oldest1);
-			fread(&entry1v, sz_v, 1, oldest1);
 
 			if(!isTomb(&entry1v))
 			{
 				fwrite(&entry1k, sz_k, 1, newfd);
 				fwrite(&entry1v, sz_v, 1, newfd);
 			}
+
+			fread(&entry1k, sz_k, 1, oldest1);
+			fread(&entry1v, sz_v, 1, oldest1);
 		}
 
 		while(1)
 		{
 			if(feof(oldest2))
 				break;
-			
-			fread(&entry2k, sz_k, 1, oldest2);
-			fread(&entry2v, sz_v, 1, oldest2);
 
 			if(!isTomb(&entry2v))
 			{
 				fwrite(&entry2k, sz_k, 1, newfd);
 				fwrite(&entry2v, sz_v, 1, newfd);
 			}
+
+			fread(&entry2k, sz_k, 1, oldest2);
+			fread(&entry2v, sz_v, 1, oldest2);
 		}
 	}
 
