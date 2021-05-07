@@ -263,16 +263,10 @@ Master::Master(){
 
 	//what is recent?
 
-	FILE *zeroth = fopen(filesys[0].c_str(), "rb");
-	fseek(zeroth, 0, SEEK_SET);
-	char time_str0[128];
-	fread(time_str0, 1, 128, zeroth);
-	fclose(zeroth);
-	tm ts_max;
-	int candidate = 0;
-	strptime(time_str0, TIME_FMT, &ts_max);
 
-	for (int i=1; i<NUMFILES; i++){
+	for (int i=0; i<NUMFILES; i++){
+		
+		//ts_i is timestamp of ith
 		FILE *ith = fopen(filesys[i].c_str(), "rb");
 		fseek(ith, 0, SEEK_SET);
 		char time_stri[128];
@@ -281,14 +275,23 @@ Master::Master(){
 		tm ts_i;
 		strptime(time_stri, TIME_FMT, &ts_i);
 
-		if (difftime(mktime(&ts_max), mktime(&ts_i)) < 0)
+		//ts_i1 is timestamp of (i+1)st
+		FILE *i1th = fopen(filesys[(i+1)%NUMFILES].c_str(), "rb");
+		fseek(i1th, 0, SEEK_SET);
+		char time_stri1[128];
+		fread(time_stri1, 1, 128, i1th);
+		fclose(i1th);
+		tm ts_i1;
+		strptime(time_stri1, TIME_FMT, &ts_i1);
+
+		if (difftime(mktime(&ts_i1), mktime(&ts_i)) < 0)
 		{
-			candidate = i;
-			memcpy(&ts_max, &ts_i, sizeof(tm));
+			recent = i;
+			break;
 		}
 	}
 
-	recent = candidate;
+	
 
 	//write backups, if any, to file
 
