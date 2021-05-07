@@ -84,7 +84,7 @@ void Master::serve(string batchfile){
 			this->current = (this->current + 1)%2;
 			this->bintree = new BinaryTree<K, V>(backups[current]);
 			this->memlock.unlock();
-			thread (adjust).detach();
+			thread (&Master::adjust).detach();
 		}
 		else{
 			this->memlock.unlock();

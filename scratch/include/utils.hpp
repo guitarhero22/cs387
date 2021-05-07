@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-typedef uint8_t byte;
+typedef uint8_t byte_;
 
 #define TIME_FMT "%Y-%m-%d.%X"
 #define TOMBSTONE_BYTE 0xFF
