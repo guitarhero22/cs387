@@ -83,83 +83,114 @@ void merge_files(FILE* oldest2, FILE* oldest1, FILE* newfd)
 	fread(&entry2k, sz_k, 1, oldest2);
 	fread(&entry2v, sz_v, 1, oldest2);
 
-	if(feof(oldest1) || feof(oldest2))
-		return;
-
-	while(1)
+	if(!feof(oldest1) && !feof(oldest2))
 	{
-
-		if(entry1k < entry2k)
+		while(1)
 		{
+
+			if(entry1k < entry2k)
+			{
+				if(!isTomb(&entry1v))
+				{
+					fwrite(&entry1k, sz_k, 1, newfd);
+					fwrite(&entry1v, sz_v, 1, newfd);
+				}
+
+				fread(&entry1k, sz_k, 1, oldest1);
+				fread(&entry1v, sz_v, 1, oldest1);
+			}
+			else if(entry2k < entry1k)
+			{
+
+				if(!isTomb(&entry2v))
+				{
+					fwrite(&entry2k, sz_k, 1, newfd);
+					fwrite(&entry2v, sz_v, 1, newfd);
+				}
+
+				fread(&entry2k, sz_k, 1, oldest2);
+				fread(&entry2v, sz_v, 1, oldest2);
+			}
+			else
+			{
+				if(!isTomb(&entry2v))
+				{
+					fwrite(&entry2k, sz_k, 1, newfd);
+					fwrite(&entry2v, sz_v, 1, newfd);
+				}
+
+				fread(&entry1k, sz_k, 1, oldest1);
+				fread(&entry1v, sz_v, 1, oldest1);
+				fread(&entry2k, sz_k, 1, oldest2);
+				fread(&entry2v, sz_v, 1, oldest2);
+			}
+
+			if(feof(oldest1))
+				break;
+			if(feof(oldest2))
+				break;
+		}
+
+		while(1)
+		{
+			if(feof(oldest1))
+				break;
+			
+			fread(&entry1k, sz_k, 1, oldest1);
+			fread(&entry1v, sz_v, 1, oldest1);
+
 			if(!isTomb(&entry1v))
 			{
 				fwrite(&entry1k, sz_k, 1, newfd);
 				fwrite(&entry1v, sz_v, 1, newfd);
 			}
-
-			fread(&entry1k, sz_k, 1, oldest1);
-			fread(&entry1v, sz_v, 1, oldest1);
 		}
-		else if(entry2k < entry1k)
+
+		while(1)
 		{
+			if(feof(oldest2))
+				break;
+			
+			fread(&entry2k, sz_k, 1, oldest2);
+			fread(&entry2v, sz_v, 1, oldest2);
 
 			if(!isTomb(&entry2v))
 			{
 				fwrite(&entry2k, sz_k, 1, newfd);
 				fwrite(&entry2v, sz_v, 1, newfd);
 			}
-
-			fread(&entry2k, sz_k, 1, oldest2);
-			fread(&entry2v, sz_v, 1, oldest2);
 		}
-		else
-		{
-			if(!isTomb(&entry2v))
-			{
-				fwrite(&entry2k, sz_k, 1, newfd);
-				fwrite(&entry2v, sz_v, 1, newfd);
-			}
-
-			fread(&entry1k, sz_k, 1, oldest1);
-			fread(&entry1v, sz_v, 1, oldest1);
-			fread(&entry2k, sz_k, 1, oldest2);
-			fread(&entry2v, sz_v, 1, oldest2);
-		}
-
-		if(feof(oldest1))
-			break;
-		if(feof(oldest2))
-			break;
 	}
 
 	while(1)
 	{
 		if(feof(oldest1))
 			break;
-		
-		fread(&entry1k, sz_k, 1, oldest1);
-		fread(&entry1v, sz_v, 1, oldest1);
 
 		if(!isTomb(&entry1v))
 		{
 			fwrite(&entry1k, sz_k, 1, newfd);
 			fwrite(&entry1v, sz_v, 1, newfd);
 		}
+
+		fread(&entry1k, sz_k, 1, oldest1);
+		fread(&entry1v, sz_v, 1, oldest1);
 	}
 
 	while(1)
 	{
 		if(feof(oldest2))
 			break;
-		
-		fread(&entry2k, sz_k, 1, oldest2);
-		fread(&entry2v, sz_v, 1, oldest2);
 
 		if(!isTomb(&entry2v))
 		{
 			fwrite(&entry2k, sz_k, 1, newfd);
 			fwrite(&entry2v, sz_v, 1, newfd);
 		}
+
+		fread(&entry2k, sz_k, 1, oldest2);
+		fread(&entry2v, sz_v, 1, oldest2);
+
 	}
 
 	return;

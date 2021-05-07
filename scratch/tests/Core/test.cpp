@@ -93,13 +93,12 @@ bool _test_merge()
 
 	bt1.insert(7, 200);
 
-	for(int i = 0; i < 10; i++)
+	for(int i = 0; i < 9; i++)
 	{
 		bt2.insert(i*2+1, i*10+1);
 	}
 
-	bt2.insert(8, tomb);
-	bt2.insert(9, 42);
+	bt2.insert(18, 91);
 
 	printf("Dumping bt1...\n");
 	bt1.dump(fopen("testbt1.dump", "wb"));
@@ -109,11 +108,12 @@ bool _test_merge()
 	bt2._free();
 
 	merge_files<K, V>(fopen("testbt2.dump", "rb"), fopen("testbt1.dump", "rb"), fopen("merged.dump", "wb"));
+
+	return true;
 }
 
 int main()
 {
-	if(!_test_read())
-		fprintf(stderr, "Test: Reading from file Failed!\n");
+	_test_merge();
 	return 0;
 }
