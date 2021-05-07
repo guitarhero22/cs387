@@ -33,3 +33,7 @@
 
 # VS Code
 .vscode
+
+# Build Files
+scratch/build
+scratch/build-debug
