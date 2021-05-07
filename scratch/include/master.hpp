@@ -8,7 +8,7 @@
 #include <thread>
 #include <mutex>
 #include <fstream>
-#include <experimental/filesystem>
+#include <filesystem>
 #include <vector>
 
 #define NUMFILES 10
@@ -17,12 +17,26 @@ using namespace std;
 
 struct K
 {
-	char c[64];
+	unsigned long bytes[8];
+
+	bool operator<(const K& k2) const
+	{
+		for(int i = 0; i < 8; i++)
+		{
+			if(bytes[i] < k2.bytes[i])
+				return true;
+			else if(bytes[i] > k2.bytes[i])
+				return false;
+			else
+				continue;
+		}
+		return false;
+	}
 };
 
 struct V
 {
-	char c[64];
+	unsigned long bytes[8];
 };
 
 class Master{

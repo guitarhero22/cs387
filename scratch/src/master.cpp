@@ -84,7 +84,7 @@ void Master::serve(string batchfile){
 			this->current = (this->current + 1)%2;
 			this->bintree = new BinaryTree<K, V>(backups[current]);
 			this->memlock.unlock();
-			thread (&Master::adjust).detach();
+			thread (&Master::adjust, this).detach();
 		}
 		else{
 			this->memlock.unlock();
@@ -145,7 +145,7 @@ void Master::run(vector <string> batchfiles){
 	int numthreads = batchfiles.size();
 	vector <thread> threads;
 	for (int i=0; i<numthreads; i++){
-		threads.push_back(thread(serve, batchfiles[i])); 
+		threads.push_back(thread(&Master::serve, this, batchfiles[i])); 
 	}
 
 	for (auto &t : threads)

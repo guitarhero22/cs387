@@ -21,7 +21,7 @@ static bool isTomb(V* entryv)
 {
 
 	size_t sz_v = sizeof(V);
-	for(int i = 0; i < sz_v; i++)
+	for(unsigned int i = 0; i < sz_v; i++)
 	{
 		if(memcmp((byte_*)entryv + i, tombByte, 1) != 0)
 		{

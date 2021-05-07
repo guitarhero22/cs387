@@ -46,12 +46,12 @@ class Node
 template<typename K, typename V>
 class BinaryTree{
     public:
-        Node<K,V>* root; //Pointer to the root
         int size = 0; //Number of Nodes
         int traversal_started = 0, sz_k = 0, sz_v = 0;
         FILE *logfile = NULL;
         string logfilename = "";
         stack<Node<K,V>*> stk; // for inorder traversal
+        Node<K,V>* root; //Pointer to the root
         // pthread_mutex_t lock;
 
         // Constructors ******************
@@ -233,7 +233,7 @@ Node<K,V>* BinaryTree<K,V>::search(K k){
     // pthread_mutex_lock(&lock);
     Node<K,V> *n = this->_search(k);
     if(n != NULL)
-        if(n -> key != k) n = NULL;
+        if((n->key) < k || k < (n->key)) n = NULL;
     // pthread_mutex_unlock(&lock);
     return n;
 }
@@ -335,7 +335,7 @@ int BinaryTree<K,V>::dump(FILE *f){
         n = n -> l;
     }
 
-    int num_entries = BLK_SIZE / (sz_k + sz_v);
+    //int num_entries = BLK_SIZE / (sz_k + sz_v);
 
     // get time
     char *time_str;
