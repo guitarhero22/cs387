@@ -8,8 +8,6 @@ FLAGS= -std=c++17 -Wno-unused-result -lpthread
 DEBUG_FLAGS = -g -D _DEBUG -std=c++17 -Wno-unused-result -lpthread
 DATA_FOLDER=./data
 
-grade: main data
-
 main: $(BUILD_DIR) main.o master.o FileIO.o fs
 	g++ -o $(BUILD_DIR)/$@  $(OBJS) $(FLAGS)
 	cp $(BUILD_DIR)/$@ fs/$@

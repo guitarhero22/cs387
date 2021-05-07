@@ -1,0 +1,362 @@
+Checking for 100
+time writebatch0.sql...
+
+real	0m0.117s
+user	0m0.034s
+sys	0m0.020s
+time writebatch1.sql...
+
+real	0m0.111s
+user	0m0.041s
+sys	0m0.016s
+time writebatch2.sql...
+
+real	0m0.103s
+user	0m0.026s
+sys	0m0.028s
+time writebatch3.sql...
+
+real	0m0.106s
+user	0m0.048s
+sys	0m0.006s
+time writebatch4.sql...
+
+real	0m0.099s
+user	0m0.039s
+sys	0m0.012s
+time writebatch5.sql...
+
+real	0m0.102s
+user	0m0.033s
+sys	0m0.017s
+time writebatch6.sql...
+
+real	0m0.106s
+user	0m0.042s
+sys	0m0.012s
+time writebatch7.sql...
+
+real	0m0.112s
+user	0m0.043s
+sys	0m0.015s
+time writebatch8.sql...
+
+real	0m0.104s
+user	0m0.048s
+sys	0m0.008s
+time writebatch9.sql...
+
+real	0m0.117s
+user	0m0.039s
+sys	0m0.017s
+
+Checking for 500
+time writebatch0.sql...
+
+real	0m0.309s
+user	0m0.063s
+sys	0m0.017s
+time writebatch1.sql...
+
+real	0m0.318s
+user	0m0.054s
+sys	0m0.031s
+time writebatch2.sql...
+
+real	0m0.326s
+user	0m0.045s
+sys	0m0.034s
+time writebatch3.sql...
+
+real	0m0.316s
+user	0m0.074s
+sys	0m0.007s
+time writebatch4.sql...
+
+real	0m0.307s
+user	0m0.061s
+sys	0m0.016s
+time writebatch5.sql...
+
+real	0m0.322s
+user	0m0.058s
+sys	0m0.016s
+time writebatch6.sql...
+
+real	0m0.333s
+user	0m0.054s
+sys	0m0.028s
+time writebatch7.sql...
+
+real	0m0.320s
+user	0m0.055s
+sys	0m0.019s
+time writebatch8.sql...
+
+real	0m0.316s
+user	0m0.068s
+sys	0m0.009s
+time writebatch9.sql...
+
+real	0m0.310s
+user	0m0.059s
+sys	0m0.011s
+
+Checking for 1000
+time writebatch0.sql...
+
+real	0m0.598s
+user	0m0.060s
+sys	0m0.041s
+time writebatch1.sql...
+
+real	0m0.573s
+user	0m0.072s
+sys	0m0.036s
+time writebatch2.sql...
+
+real	0m0.549s
+user	0m0.043s
+sys	0m0.058s
+time writebatch3.sql...
+
+real	0m0.578s
+user	0m0.075s
+sys	0m0.029s
+time writebatch4.sql...
+
+real	0m0.613s
+user	0m0.069s
+sys	0m0.030s
+time writebatch5.sql...
+
+real	0m0.576s
+user	0m0.058s
+sys	0m0.041s
+time writebatch6.sql...
+
+real	0m0.601s
+user	0m0.064s
+sys	0m0.037s
+time writebatch7.sql...
+
+real	0m0.589s
+user	0m0.069s
+sys	0m0.034s
+time writebatch8.sql...
+
+real	0m0.579s
+user	0m0.070s
+sys	0m0.034s
+time writebatch9.sql...
+
+real	0m0.645s
+user	0m0.068s
+sys	0m0.048s
+
+Checking for 5000
+time writebatch0.sql...
+
+real	0m2.805s
+user	0m0.212s
+sys	0m0.126s
+time writebatch1.sql...
+
+real	0m2.888s
+user	0m0.201s
+sys	0m0.183s
+time writebatch2.sql...
+
+real	0m2.804s
+user	0m0.223s
+sys	0m0.149s
+time writebatch3.sql...
+
+real	0m2.722s
+user	0m0.179s
+sys	0m0.135s
+time writebatch4.sql...
+
+real	0m2.826s
+user	0m0.239s
+sys	0m0.126s
+time writebatch5.sql...
+
+real	0m2.861s
+user	0m0.201s
+sys	0m0.127s
+time writebatch6.sql...
+
+real	0m2.842s
+user	0m0.191s
+sys	0m0.143s
+time writebatch7.sql...
+
+real	0m2.860s
+user	0m0.162s
+sys	0m0.164s
+time writebatch8.sql...
+
+real	0m2.898s
+user	0m0.193s
+sys	0m0.133s
+time writebatch9.sql...
+
+real	0m2.837s
+user	0m0.178s
+sys	0m0.128s
+
+Checking for 10000
+time writebatch0.sql...
+
+real	0m5.636s
+user	0m0.361s
+sys	0m0.236s
+time writebatch1.sql...
+
+real	0m5.561s
+user	0m0.365s
+sys	0m0.260s
+time writebatch2.sql...
+
+real	0m5.501s
+user	0m0.318s
+sys	0m0.295s
+time writebatch3.sql...
+
+real	0m5.521s
+user	0m0.302s
+sys	0m0.315s
+time writebatch4.sql...
+
+real	0m5.706s
+user	0m0.354s
+sys	0m0.266s
+time writebatch5.sql...
+real	0m5.485s
+user	0m0.357s
+sys	0m0.281s
+time writebatch6.sql...
+
+real	0m5.594s
+user	0m0.380s
+sys	0m0.238s
+time writebatch7.sql...
+
+real	0m5.670s
+user	0m0.285s
+sys	0m0.313s
+time writebatch8.sql...
+
+real	0m5.583s
+user	0m0.356s
+sys	0m0.301s
+time writebatch9.sql...
+
+real	0m5.562s
+user	0m0.317s
+sys	0m0.263s
+
+Checking for 50000
+time writebatch0.sql...
+
+real	0m28.569s
+user	0m1.489s
+sys	0m1.389s
+time writebatch1.sql...
+
+real	0m30.979s
+user	0m1.571s
+sys	0m1.472s
+time writebatch2.sql...
+
+real	0m28.355s
+user	0m1.578s
+sys	0m1.326s
+time writebatch3.sql...
+
+real	0m28.610s
+user	0m1.387s
+sys	0m1.506s
+time writebatch4.sql...
+
+real	0m28.157s
+user	0m1.443s
+sys	0m1.507s
+time writebatch5.sql...
+
+real	0m28.238s
+user	0m1.456s
+sys	0m1.438s
+time writebatch6.sql...
+
+real	0m28.588s
+user	0m1.523s
+sys	0m1.478s
+time writebatch7.sql...
+
+real	0m28.540s
+user	0m1.462s
+sys	0m1.497s
+time writebatch8.sql...
+
+real	0m28.329s
+user	0m1.473s
+sys	0m1.503s
+time writebatch9.sql...
+
+real	0m28.099s
+user	0m1.534s
+sys	0m1.494s
+
+Checking for 100000
+time writebatch0.sql...
+
+real	0m56.907s
+user	0m3.075s
+sys	0m2.693s
+time writebatch1.sql...
+
+real	0m56.614s
+user	0m3.143s
+sys	0m2.597s
+time writebatch2.sql...
+
+real	0m56.144s
+user	0m2.899s
+sys	0m2.861s
+time writebatch3.sql...
+
+real	0m57.523s
+user	0m2.832s
+sys	0m3.020s
+time writebatch4.sql...
+
+real	0m56.873s
+user	0m2.954s
+sys	0m2.761s
+time writebatch5.sql...
+
+real	0m56.425s
+user	0m3.004s
+sys	0m2.752s
+time writebatch6.sql...
+
+real	0m56.416s
+user	0m3.196s
+sys	0m2.768s
+time writebatch7.sql...
+
+real	0m55.795s
+user	0m2.951s
+sys	0m2.786s
+time writebatch8.sql...
+
+real	0m56.377s
+user	0m2.976s
+sys	0m2.865s
+time writebatch9.sql...
+
+real	0m56.305s
+user	0m3.375s
+sys	0m2.770s

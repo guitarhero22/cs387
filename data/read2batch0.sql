@@ -1,3 +1,0 @@
-select * from testmultiple where keycol =233aebed5a4d6140151c84c469bf9e892a117b0f20c5e02112859a61189dcc8d;
-select * from testmultiple where keycol =363a0bbab4e8dbc6151561e4835894b5c8c8e8c80d034d000bf111ed364bb247;
-select * from testmultiple where keycol =7d2872c418595cc16ef5521c381c540ea7e2dc65f1791e7db1df10f05519f202;

@@ -24,6 +24,7 @@ rm -rf fs >/dev/null
 make >/dev/null
 cd fs
 echo "Checking for $i multi threaded..."
+rm -rf ../../data/"$i"_2/*.out >/dev/null
 echo `ls ../../data/"$i"_2 | grep write | grep scratch`
 time ./main ../../data/"$i"_2/writebatch0.scratch ../../data/"$i"_2/writebatch1.scratch
 cd ..

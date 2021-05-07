@@ -40,4 +40,4 @@ writebatch0.scratch writebatch1.scratch
 
 real    0m7.208s
 user    0m1.037s
-sys     0m2.966s
+sys     0m2.966
