@@ -1,7 +1,5 @@
 #include "master.hpp"
-
-#include <unistd.h>
-
+#include <iostream>
 
 bool Master::dbread(const K &k, V &v){
 
@@ -14,29 +12,35 @@ bool Master::dbread(const K &k, V &v){
 		this->memlock.unlock();
 		return false;
 	}
-	
+
+	errlog("Bloom returned True\n");
+
 	//check in memory tree, and reserve too, since you hold lock
 	Node<K, V> *n = this->bintree->search(k);
-	Node<K, V> *nr = this->reserve->search(k);
-	this->memlock.unlock();
+	Node<K, V> *nr;
+	if(this->reserve != NULL)
+		nr = this->reserve->search(k);
 	
 	if (n != NULL){
-		
 		memcpy(&v, &n->value, sizeof(V));
+		this->memlock.unlock();
 		return true;
 	}
 	if (nr != NULL)
 	{
-
 		memcpy(&v, &nr->value, sizeof(V));
+		this->memlock.unlock();
 		return true;
 	}
 
+	this->memlock.unlock();
+	
 	//now traverse filesystem
-	for (int i=r; i!=(r+2)%NUMFILES; i=(i-1)%NUMFILES){
+	for (int i=r; i!=(r+2)%NUMFILES; i=(i-1+NUMFILES)%NUMFILES){
 		int fd = FileIO::openFile(filesys[i]);
 		if (findEntry<K, V>(fd, k, v))
 		{
+			cout << (char *) &v << endl;
 			return true;
 		}
 	}
@@ -44,15 +48,18 @@ bool Master::dbread(const K &k, V &v){
 	//last two danger files. if recent has been updated,
 	//last is redundant, becuase we already checked reserve too
 	this->fslock.lock();
-	for (int i = (r + 2) % NUMFILES; i != r; i = (i - 1) % NUMFILES)
+	for (int i = (r + 2) % NUMFILES; i != r; i = (i - 1 + NUMFILES) % NUMFILES)
 	{
 		int fd = FileIO::openFile(filesys[i]);
 		if (findEntry<K, V>(fd, k, v))
 		{
+			cout << (char *) &v << endl;
+			this->fslock.unlock();
 			return true;
 		}
 	}
 	this->fslock.unlock();
+	cout << (char *) &v << endl;
 	return false;
 }
 
@@ -87,14 +94,21 @@ void Master::serve(string batchfile){
 			y = a.substr(a.find(' ') + 1, 64);
 			K K1;
 			V V1;
+			// memcpy(&K1, y.c_str(), 64);
 			K1 = *(K *)y.c_str();
+			// cout << string((char *) &K1) << endl;
 			//	for(int i=0;i<1;i++) cout<<K1.bytes[i];
-			this->dbread(K1, V1);
 			ofstream f2(outname,ios::app);
-			char* out1;
-			out1=(char*)V1.bytes;
-			f2<<out1;
-			f2<<"\n";
+			if(this->dbread(K1, V1))
+			{
+				char out1[65];
+				memcpy(out1, V1.bytes, 64);
+				out1[64] = '\0';
+				f2<<out1;
+				f2<<"\n";
+			}else{
+				f2 << "Key Not Found!\n";
+			};
 			//	cout<<y<<endl;
 		}
 		
@@ -151,19 +165,37 @@ void Master::adjust(){
 
 	//overwrite the second oldest file with the merge
 	filesystem::resize_file(filesys[(this->recent + 2) % NUMFILES], 0);
+	#ifdef _DEBUG
+		FILE *oldest2d = fopen(tempfile.c_str(), "rb"); fseek(oldest2d, 0, SEEK_END);
+		FILE *oldest1d = fopen(filesys[(this->recent + 1) % NUMFILES].c_str(), "rb"); fseek(oldest1d, 0, SEEK_END);
+		FILE *newfdd = fopen(filesys[(this->recent + 2) % NUMFILES].c_str(), "rb"); fseek(newfdd, 0, SEEK_END);
+	printf("********Before: Tempfile: %ld, Recent+1: %ld, newfd: %ld\n", ftell(oldest2d), ftell(oldest1d), ftell(newfdd));
+		fclose(oldest2d);
+		fclose(oldest1d);
+		fclose(newfdd);
+	#endif
 	FILE *oldest2 = fopen(tempfile.c_str(), "rb");
 	FILE *oldest1 = fopen(filesys[(this->recent + 1) % NUMFILES].c_str(), "rb");
 	FILE *newfd = fopen(filesys[(this->recent + 2) % NUMFILES].c_str(), "wb");
-
+	
 	errlog("Master::adjust: Calling Merge Files...\n");
 
 	merge_files<K, V>(oldest2, oldest1, newfd);
 	fclose(oldest2);
 	fclose(oldest1);
 	fclose(newfd);
-
+	fflush(newfd);
+	fsync(fileno(newfd));
 	errlog("Master::adjust Files Merged ...\n");
-
+	#ifdef _DEBUG
+		oldest2d = fopen(tempfile.c_str(), "rb"); fseek(oldest2d, 0, SEEK_END);
+		oldest1d = fopen(filesys[(this->recent + 1) % NUMFILES].c_str(), "rb"); fseek(oldest1d, 0, SEEK_END);
+		newfdd = fopen(filesys[(this->recent + 2) % NUMFILES].c_str(), "rb"); fseek(newfdd, 0, SEEK_END);
+		printf("********After: Tempfile: %ld, Recent+1: %ld, newfd: %ld\n", ftell(oldest2d), ftell(oldest1d), ftell(newfdd));
+		fclose(oldest2d);
+		fclose(oldest1d);
+		fclose(newfdd);
+	#endif
 	//empty tempfile
 	filesystem::resize_file(tempfile, 0);
 
@@ -178,6 +210,13 @@ void Master::adjust(){
 
 	//clear the contents of the old backup
 	filesystem::resize_file(backups[(this->current+1)%2], 0);
+	#ifdef _DEBUG
+		FILE * backup_ = fopen(backups[(this->current+1)%2].c_str(), "rb");
+		sync();
+		printf("Backup Size: %ld\n", ftell(backup_));
+		fclose(backup_);
+	#endif
+
 
 	//can finally reclaim memory
 	delete this->reserve;

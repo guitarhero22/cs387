@@ -6,13 +6,14 @@
 #include "Core/Merge.hpp"
 #include "Core/Read.hpp"
 #include "utils.hpp"
+#include <unistd.h>
 #include <thread>
 #include <mutex>
 #include <fstream>
 #include <filesystem>
 #include <vector>
 
-#define MAX_TREE_SIZE 5
+#define MAX_TREE_SIZE 1024
 #define NUMFILES 10
 
 using namespace std;

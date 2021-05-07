@@ -5,6 +5,7 @@
 #include<stdio.h>
 #include<cstring>
 #include<string>
+#include<iostream>
 
 using namespace std;
 
@@ -20,17 +21,6 @@ class Bloom{
                 memset(arr, 0, sizeof(unsigned char) * ((1 << 16) / 8));
             else
                 memset(arr, (1 << 8) - 1, sizeof(unsigned char) * ((1 << 16) / 8));
-            // #ifdef _DEBUG
-            //     for(int i = 0; i < (1 << 16)/8; ++i){
-            //         if(arr[i] == 0)
-            //             fprintf(stderr, "0 ");
-            //         else if(arr[i] == (1 << 8) - 1)
-            //             fprintf(stderr, "1 ");
-            //         else
-            //             fprintf(stderr, "2 ");
-            //     }
-            //     fprintf(stderr, "\n");
-            // #endif
         }
 
         void set(K k){
@@ -106,17 +96,6 @@ class BloomFile{
                 }
                 fwrite(arr, sizeof(unsigned char), (1<<16)/8, bloomwrite);
                 fflush(bloomwrite);
-            // #ifdef _DEBUG
-            //     for(int i = 0; i < (1 << 16)/8; ++i){
-            //         if(arr[i] == 0)
-            //             fprintf(stderr, "0 ");
-            //         else if(arr[i] == (1 << 8) - 1)
-            //             fprintf(stderr, "1 ");
-            //         else
-            //             fprintf(stderr, "2 ");
-            //     }
-            //     fprintf(stderr, "\n");
-            // #endif
         }
 
         void set(K k){
@@ -124,9 +103,10 @@ class BloomFile{
                 Pass a key to set the corresponding bits 1 in the bloom array
             */
             unsigned short *s = (unsigned short *)&k;
-            s -= 16;
+            
+            s -= 1;
             for(int i = 0; i<3; ++i){
-                s += 16;
+                s += 1;
                 unsigned char temp = arr[(*s) / 8] | ( 1<<((*s) % 8) );
                 if(temp != arr[(*s) / 8]){
                     arr[(*s) / 8] = temp;
@@ -140,10 +120,10 @@ class BloomFile{
             /*
                 Pass a key to find out whether the key is present
             */
-            unsigned short *s = (unsigned short *)&k;
-            s -= 16;
+            unsigned short *s = (unsigned short *) &k;
+            s -= 1;
             for(int i = 0; i<3; ++i){
-                s += 16;
+                s += 1;
                 if(!(arr[(*s) / 8] & ( 1<<((*s)%8)))) return false;
             }
             return true;
