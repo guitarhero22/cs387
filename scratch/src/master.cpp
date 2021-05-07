@@ -34,7 +34,7 @@ bool Master::dbread(const K &k, V &v){
 	}
 
 	this->memlock.unlock();
-	this->fslock.lock();
+	
 	//errlog("Master::dbread: Key not found in memory\n");
 	//now traverse filesystem
 	for (int i=r; i!=(r+2)%NUMFILES; i=(i-1+NUMFILES)%NUMFILES){
@@ -51,7 +51,7 @@ bool Master::dbread(const K &k, V &v){
 	//errlog("Master::dbread: Key not found in filesystem\n");
 	//last two danger files. if recent has been updated,
 	//last is redundant, becuase we already checked reserve too
-
+	this->fslock.lock();
 	for (int i = (r + 2) % NUMFILES; i != r; i = (i - 1 + NUMFILES) % NUMFILES)
 	{
 		int fd = FileIO::openFile(filesys[i]);
