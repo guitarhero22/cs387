@@ -37,3 +37,6 @@
 # Build Files
 scratch/build
 scratch/build-debug
+
+# Filesystem
+scratch/fs
