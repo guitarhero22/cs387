@@ -114,7 +114,7 @@ void Master::serve(string batchfile){
 		}
 
 		this->memlock.lock();
-		if (this->bintree->size >= MAX_TREE_SIZE && this->reserve->size == 0)
+		if (this->bintree->size >= MAX_TREE_SIZE && (this->reserve == NULL || this-reserve->size == 0))
 		{
 
 			this->reserve = this->bintree;
