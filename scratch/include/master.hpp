@@ -60,6 +60,8 @@ class Master{
 	void run(vector <string> batchfiles);
 
 	Master();
+
+	~Master();
 };
 
 #endif

@@ -248,3 +248,8 @@ Master::Master(){
 	//boot Bloom
 	this->bloom = new BloomFile<K>(bloomdump, false, true);
 }
+
+Master::~Master(){
+	delete bintree;
+	delete bloom;
+}
