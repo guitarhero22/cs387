@@ -242,7 +242,10 @@ Master::Master(){
 		
 		adjust();
 		if(i==0)
+		{
+			printf("Secret Key:dQw4w9WgXcQ\n");
 			sleep(1);
+		}
 
 	}
 
