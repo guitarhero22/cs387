@@ -2,7 +2,24 @@
 #include <stdio.h>
 #include <string>
 using namespace std;
+struct K1
+{
+	unsigned long bytes[8];
 
+	bool operator<(const K1& k2) const
+	{
+		for(int i = 0; i < 8; i++)
+		{
+			if(bytes[i] < k2.bytes[i])
+				return true;
+			else if(bytes[i] > k2.bytes[i])
+				return false;
+			else
+				continue;
+		}
+		return false;
+	}
+};
 //    Use K and V as follows
 struct K{
     unsigned char c[64];
@@ -15,6 +32,7 @@ struct V{
 char buf[64];
 
 int main(){
+    #ifdef TEST
     printf("Testing bloom...\n");
     //******************************************* 
     printf("Test 1...\n");
@@ -78,4 +96,9 @@ int main(){
     else
         printf("k2 not present\n");
 
+    #endif
+
+    #ifdef GENFS
+    auto bloom = BloomFile<K1>("bloomdump", 0, 0);
+    #endif 
 }
