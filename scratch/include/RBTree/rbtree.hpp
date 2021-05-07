@@ -100,6 +100,7 @@ class BinaryTree{
         Node<K,V>* _inorder();//inorder travversal of the tree for traversal
         ~BinaryTree()
         {
+            while(!stk.empty()) stk.pop();
             setLogFile("");
         }
 };
@@ -129,7 +130,13 @@ void BinaryTree<K,V>::fromFile(string fname)
         strftime(log_str + 7, 20, TIME_FMT, &tstruct);
         fprintf(stderr, "Using the following name instead: %s\n", log_str);
         setLogFile(string(log_str));
+        #ifdef _DEBUG
+            fprintf(stderr, "BinaryTRee::fromFile freeing log_str here\n");
+        #endif
         free(log_str);
+        #ifdef _DEBUG
+            fprintf(stderr, "BinaryTRee::fromFile log_str freed successfully here\n");
+        #endif
     }
     FILE *backup = fopen(fname.c_str(), "rb");
     if(backup == NULL)
@@ -168,10 +175,13 @@ void BinaryTree<K,V>::fromFile(string fname)
         }
         else if(*(unsigned char*) buff == _del_){
             del(*(K *)(buff + 1));
-        }else{
+        }else if(*(unsigned char*) buff == _sync_)
+        {
             #ifdef _DEBUG
-                fprintf(stderr, "No actions in backup entry\n");
+                fprintf(stderr, "Backups in Sync\n");
             #endif
+        }else{
+            fprintf(stderr, "backup entry corrupted!\n");
         }
     }
     if(backup != NULL) fclose(backup);
@@ -338,8 +348,7 @@ int BinaryTree<K,V>::dump(FILE *f){
     //int num_entries = BLK_SIZE / (sz_k + sz_v);
 
     // get time
-    char *time_str;
-    time_str = (char*) malloc(sz_k + sz_v);
+    char *time_str = new char[sz_k + sz_v];
     for(int i=0;i<sz_k + sz_v;i++) time_str[i] = '0';
     time_t now = time(0);
     tm tstruct = *localtime(&now);
@@ -347,7 +356,8 @@ int BinaryTree<K,V>::dump(FILE *f){
     strftime(time_str, 20, TIME_FMT, &tstruct);
     time_str[19] = '0';
     #ifdef _DEBUG
-        fprintf(stderr, "Check the time: %s\n", time_str);
+        fprintf(stderr, "BinaryTree::dump: Check the time: %s\n", time_str);
+        fflush(stderr);
     #endif
     fwrite(time_str, 1, sz_k + sz_v, f);
 
@@ -357,9 +367,9 @@ int BinaryTree<K,V>::dump(FILE *f){
         /* 
             Do whatever you want with n here 
         */
-        #ifdef _DEBUG
-            fprintf(stderr, "Program Here\n");
-        #endif
+        // #ifdef _DEBUG
+        //     fprintf(stderr, "Program Here\n");
+        // #endif
 
         fwrite(&(n -> key), 1, sz_k, f);
         fwrite(&(n -> value), 1, sz_v, f);
@@ -374,7 +384,16 @@ int BinaryTree<K,V>::dump(FILE *f){
     fflush(f);
     Node<K,V> dummy;
     log_action(dummy.key, dummy.value, _sync_);
-    free(time_str);
+    #ifdef _DEBUG
+        fprintf(stderr, "BinaryTree::dump: freeing time_str here\n");
+        fflush(stderr);
+    #endif
+
+    delete[] time_str;
+    #ifdef _DEBUG
+        fprintf(stderr, "BinaryTree::dump: time_str freed successfully here\n");
+        fflush(stderr);
+    #endif
     // pthread_mutex_unlock(&lock);
     return 0;
 }
@@ -392,13 +411,17 @@ void BinaryTree<K,V>::_free(){
         }
     #endif
     while(!stk.empty()){
-        #ifdef _DEBUG
-            fprintf(stderr, "_free: Program Here\n");
-        #endif
+        // #ifdef _DEBUG
+        //     fprintf(stderr, "_free: Program Here\n");
+        // #endif
         n = stk.top();
         stk.pop();
         if(n -> l != NULL) stk.push(n -> l);
         if(n -> r != NULL) stk.push(n -> r);
+        #ifdef _DEBUG
+            fprintf(stderr, "BinaryTree::_free: Freeing Node here\n");
+            fflush(stderr);
+        #endif
         delete n;
     }
     root = NULL;
