@@ -2,7 +2,24 @@
 #include <stdio.h>
 #include <time.h>
 using namespace std;
+struct K1
+{
+	unsigned long bytes[8];
 
+	bool operator<(const K1& k2) const
+	{
+		for(int i = 0; i < 8; i++)
+		{
+			if(bytes[i] < k2.bytes[i])
+				return true;
+			else if(bytes[i] > k2.bytes[i])
+				return false;
+			else
+				continue;
+		}
+		return false;
+	}
+};
 //    Use K and V as follows
 struct K{
     char c[16];
@@ -15,6 +32,7 @@ struct V{
 char buf[64];
 
 int main(){
+    #ifdef TEST
     printf("Testing rbtree...\n");
     //******************************************* 
 
@@ -56,14 +74,14 @@ int main(){
     bt1.dump(fopen("test.dump", "wb"));
     printf("Freeing bt1 ...\n");
     bt1._free();
+    #endif
 
-    // Get current date/time, format is YYYY-MM-DD.HH:mm:ss
-    // time_t now = time(0);
-    // tm tstruct = *localtime(&now);
-    // tstruct = *localtime(&now);
-    // for(int i=0; i<64; ++i) buf[i] = '0';
-    // strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
-    // buf[19] = ' ';
-    // buf[63] = '\0';
-    // printf("%s\n", buf);
+    #ifdef GENFS
+    string fname="file";
+    auto bt = BinaryTree<K1, K1>();
+    for(int i = 0; i < 10; ++i){
+        bt.dump(fopen((fname + to_string(i)).c_str(), "wb"));
+    }
+    #endif
+
 }
