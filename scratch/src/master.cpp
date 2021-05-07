@@ -145,7 +145,7 @@ void Master::run(vector <string> batchfiles){
 	int numthreads = batchfiles.size();
 	vector <thread> threads;
 	for (int i=0; i<numthreads; i++){
-		threads.push_back(thread(serve, batchfiles[i])); 
+		threads.push_back(thread(&Master::serve, batchfiles[i])); 
 	}
 
 	for (auto &t : threads)
