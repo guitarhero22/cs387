@@ -8,5 +8,5 @@ int main(int argc, char* argv[]){
 		batchfiles.assign(argv + 1, argv + argc);
 	}
 	master.run(batchfiles);
-	sleep(3);
+	sleep(1);
 }

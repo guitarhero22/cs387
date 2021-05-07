@@ -1,0 +1,43 @@
+testing write ...
+Checking for 100 multi threaded...
+writebatch0.scratch writebatch1.scratch
+
+real    0m2.027s
+user    0m0.011s
+sys     0m0.000s
+Checking for 500 multi threaded...
+writebatch0.scratch writebatch1.scratch
+
+real    0m2.050s
+user    0m0.008s
+sys     0m0.013s
+Checking for 1000 multi threaded...
+writebatch0.scratch writebatch1.scratch
+
+real    0m2.086s
+user    0m0.020s
+sys     0m0.027s
+Checking for 5000 multi threaded...
+writebatch0.scratch writebatch1.scratch
+
+real    0m2.307s
+user    0m0.033s
+sys     0m0.131s
+Checking for 10000 multi threaded...
+writebatch0.scratch writebatch1.scratch
+
+real    0m2.516s
+user    0m0.074s
+sys     0m0.217s
+Checking for 50000 multi threaded...
+writebatch0.scratch writebatch1.scratch
+
+real    0m4.536s
+user    0m0.444s
+sys     0m1.427s
+Checking for 100000 multi threaded...
+writebatch0.scratch writebatch1.scratch
+
+real    0m7.208s
+user    0m1.037s
+sys     0m2.966s

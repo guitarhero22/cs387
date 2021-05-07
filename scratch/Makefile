@@ -49,7 +49,7 @@ $(BUILD_DEBUG_DIR)/FileIO.o: $(SRC_DIR)/BufferManager/FileIO.cpp
 	g++ -c -o $@ $(DEBUG_FLAGS) -I$(INCLUDE_DIR) $<
 
 gendata:
-	cd $(DATA_FOLDER) && python3 datagen.py 8 2000
+	cd $(DATA_FOLDER) && python3 datagen.py 2 50000
 
 ./build:
 	mkdir build
