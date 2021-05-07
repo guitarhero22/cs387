@@ -29,9 +29,12 @@ int main(){
     //Make FS
     auto bt = BinaryTree<K,K>();
     for(int i = 0; i<10; ++i){
+		printf(".");
+		fflush(stdout);
         sleep(1);
         bt.dump(fopen(("file" + to_string(i)).c_str(), "wb"));
     }
+	printf("\n");
 
     //Make Backups
     bt.setLogFile("backup0");
