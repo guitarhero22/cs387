@@ -10,6 +10,8 @@
 #include <fstream>
 #include <filesystem>
 #include <vector>
+#define MAX_TREE_SIZE 5
+
 #ifdef _DEBUG
 #define errlog(a) fprintf(stderr, a), fflush(stderr)
 #else

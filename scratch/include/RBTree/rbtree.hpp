@@ -13,6 +13,11 @@
 #include "utils.hpp"
 #include <pthread.h>
 
+#ifdef _DEBUG
+#define errlog(a) fprintf(stderr, a), fflush(stderr)
+#else
+#define errlog(a)
+#endif
 using namespace std;
 
 

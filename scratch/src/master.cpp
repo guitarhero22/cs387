@@ -74,7 +74,7 @@ void Master::dbwrite(K k, V v){
 void Master::serve(string batchfile){
 	string a;
 	string outname;
-	outname=fname.substr(0);
+	outname=batchfile.substr(0);
 	outname.append(".out");
 
 	ifstream f1(batchfile);
@@ -114,7 +114,7 @@ void Master::serve(string batchfile){
 		}
 
 		this->memlock.lock();
-		if (this->bintree->size >= 2048 && this->reserve->size == 0)
+		if (this->bintree->size >= MAX_TREE_SIZE && this->reserve->size == 0)
 		{
 
 			this->reserve = this->bintree;
