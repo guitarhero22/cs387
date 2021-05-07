@@ -10,7 +10,11 @@
 #include <fstream>
 #include <filesystem>
 #include <vector>
-
+#ifdef _DEBUG
+#define errlog(a) fprintf(stderr, a), fflush(stderr)
+#else
+#define errlog(a)
+#endif
 #define NUMFILES 10
 
 using namespace std;

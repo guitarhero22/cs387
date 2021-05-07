@@ -262,7 +262,9 @@ Node<K,V>* BinaryTree<K,V>::search(K k){
 
 template<typename K, typename V>
 int BinaryTree<K,V>::insert(K k, V v){
-
+    #ifdef _DEBUG
+        fprintf(stderr, "write request\n");
+    #endif
     // pthread_mutex_lock(&lock);
     Node<K,V>* p = this->_search(k);
     if(p == NULL){
