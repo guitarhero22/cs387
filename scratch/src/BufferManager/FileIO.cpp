@@ -12,7 +12,7 @@ int FileIO::openFile(const std::string& filePath)
 	 * O_RDWR Open for reading and writing
 	 * O_SYNC Will write to disk before returning
 	 */
-	return open(filePath.c_str(), O_RDWR | O_SYNC);
+	return open(filePath.c_str(), O_RDONLY | O_SYNC);
 }
 
 void FileIO::closeFile(int fileHandle)
