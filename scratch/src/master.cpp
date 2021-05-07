@@ -1,40 +1,6 @@
 #include "master.hpp"
-int batchHandler(string fname)
-{
-string a;
 
-ifstream f1(fname);
-while(getline(f1,a))
-{
-	if (a[0]=='r')
-	{	
-		string x,y,z;
-		x=a.substr(0,a.find(' '));
-		y=a.substr(a.find('=')+1,64);
-		K K1;V V1;
-		K1=*(K*)y.c_str();
-	//	for(int i=0;i<1;i++) cout<<K1.bytes[i];
-		Master::dbread(K1,V1);
-	//	cout<<y<<endl;
-	}
-	else if (a[0]=='w')
-	{
-	string x,y,z;
-	x=a.substr(0,a.find(' '));
-	y=a.substr(a.find('w')+2,64);
-	z=a.substr(a.find(',')+2,64);
-	K K1;V V1;	
-	K1=*(K*)y.c_str();
-	V1=*(V*)z.c_str();
-	//for(int i=0;i<1;i++) cout<<K1.bytes[i];cout<<endl;
-	Master::dbwrite(K1,V1);
-	//cout<<y<<" "<<z<<endl;
-		
-	}
-}
 
-return 0;
-}
 bool Master::dbread(const K &k, V &v){
 
 	//what is recent now
@@ -104,27 +70,55 @@ void Master::dbwrite(K k, V v){
 }
 
 void Master::serve(string batchfile){
-	//TODO: figure out a way to read and parse batchfile neatly
-	while(1){
-		//condition to be replaced with (getline) or sth
-		int ret=Master::batchHandler(batchfile);
-		this->memlock.lock();
-		
-		//call whatever read/write
+	string a;
 
+	ifstream f1(batchfile);
+	while (getline(f1, a))
+	{
+		if (a[0] == 'r')
+		{
+			string x, y, z;
+			x = a.substr(0, a.find(' '));
+			y = a.substr(a.find(' ') + 1, 64);
+			K K1;
+			V V1;
+			K1 = *(K *)y.c_str();
+			//	for(int i=0;i<1;i++) cout<<K1.bytes[i];
+			this->dbread(K1, V1);
+			//	cout<<y<<endl;
+		}
 		
-		if (this->bintree->size >= 2048 && this->reserve->size == 0){
-		
+		else if (a[0] == 'w')
+		{
+			string x, y, z;
+			x = a.substr(0, a.find(' '));
+			y = a.substr(a.find('w') + 2, 64);
+			z = a.substr(a.find(',') + 2, 64);
+			K K1;
+			V V1;
+			K1 = *(K *)y.c_str();
+			V1 = *(V *)z.c_str();
+			//for(int i=0;i<1;i++) cout<<K1.bytes[i];cout<<endl;
+			this->dbwrite(K1, V1);
+			//cout<<y<<" "<<z<<endl;
+		}
+
+		this->memlock.lock();
+		if (this->bintree->size >= 2048 && this->reserve->size == 0)
+		{
+
 			this->reserve = this->bintree;
-			this->current = (this->current + 1)%2;
+			this->current = (this->current + 1) % 2;
 			this->bintree = new BinaryTree<K, V>(backups[current]);
 			this->memlock.unlock();
-			thread (&Master::adjust, this).detach();
+			thread(&Master::adjust, this).detach();
 		}
-		else{
+		else
+		{
 			this->memlock.unlock();
 		}
 	}
+
 }
 
 void Master::adjust(){
