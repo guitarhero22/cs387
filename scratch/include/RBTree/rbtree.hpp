@@ -13,12 +13,8 @@
 #include "utils.hpp"
 #include <pthread.h>
 
-#ifdef _DEBUG
-#define errlog(a) fprintf(stderr, a), fflush(stderr)
-#else
-#define errlog(a)
-#endif
 using namespace std;
+
 
 
 /** 
@@ -135,13 +131,12 @@ void BinaryTree<K,V>::fromFile(string fname)
         strftime(log_str + 7, 20, TIME_FMT, &tstruct);
         fprintf(stderr, "Using the following name instead: %s\n", log_str);
         setLogFile(string(log_str));
-        #ifdef _DEBUG
-            fprintf(stderr, "BinaryTRee::fromFile freeing log_str here\n");
-        #endif
+            
+        errlog("BinaryTRee::fromFile freeing log_str here\n");
+
         free(log_str);
-        #ifdef _DEBUG
-            fprintf(stderr, "BinaryTRee::fromFile log_str freed successfully here\n");
-        #endif
+
+        errlog("BinaryTRee::fromFile log_str freed successfully here\n");
     }
     FILE *backup = fopen(fname.c_str(), "rb");
     if(backup == NULL)
@@ -161,28 +156,20 @@ void BinaryTree<K,V>::fromFile(string fname)
     }
     unsigned char * buff = (unsigned char *) malloc(entry_size + 1);
     bool found_sync = false;
-    #ifdef _DEBUG
-        fprintf(stderr, "BinaryTree::fromFile Number of entries: %f, start: %ld, end: %ld\n", num_entries, start, ftell(backup));
-    #endif
+    errlog("BinaryTree::fromFile Number of entries: %f, start: %ld, end: %ld\n", num_entries, start, ftell(backup));
     if(start != ftell(backup)){
         while(ftell(backup) > start && !found_sync){
-            #ifdef _DEBUG
-                fprintf(stderr, "BinaryTree::fromFile inside while loop: start: %ld, end %ld\n", start, ftell(backup));
-            #endif
+            errlog("BinaryTree::fromFile inside while loop: start: %ld, end %ld\n", start, ftell(backup));
             fseek(backup, -entry_size, SEEK_CUR);
             fread(buff, entry_size, 1, backup);
             fseek(backup, -entry_size, SEEK_CUR);
             if(*((unsigned char *) buff) == _sync_){
                 found_sync = true;
-                #ifdef _DEBUG
-                    fprintf(stderr, "Backup Restore: Found _sync_\n");
-                #endif
+                errlog("Backup Restore: Found _sync_\n");
             }
         }
         if(found_sync) fseek(backup, entry_size, SEEK_CUR);
-        #ifdef _DEBUG
-            fprintf(stderr, "BinaryTree::fromFile while end: End of File: %d, current pos: %ld\n", feof(backup), ftell(backup));
-        #endif 
+        errlog("BinaryTree::fromFile while end: End of File: %d, current pos: %ld\n", feof(backup), ftell(backup));
         while(!feof(backup)){
             fread(buff, entry_size, 1, backup);
             if(*(unsigned char*) buff == _write_)
@@ -193,9 +180,7 @@ void BinaryTree<K,V>::fromFile(string fname)
                 del(*(K *)(buff + 1));
             }else if(*(unsigned char*) buff == _sync_)
             {
-                #ifdef _DEBUG
-                    fprintf(stderr, "Backups in Sync\n");
-                #endif
+                errlog("Backups in Sync\n");
             }else{
                 fprintf(stderr, "backup entry corrupted!\n");
             }
@@ -214,9 +199,7 @@ void BinaryTree<K,V>::check()
         fprintf(stderr, "Key and Value size not consistent with block size");
         exit(1);
     }
-    #ifdef _DEBUG
-        fprintf(stderr, "Size of Key %d, Size of Value %d\n", sz_k, sz_v);
-    #endif
+    errlog("Size of Key %d, Size of Value %d\n", sz_k, sz_v);
 }
 
 template<typename K, typename V>
@@ -267,9 +250,7 @@ Node<K,V>* BinaryTree<K,V>::search(K k){
 
 template<typename K, typename V>
 int BinaryTree<K,V>::insert(K k, V v){
-    #ifdef _DEBUG
-        fprintf(stderr, "write request\n");
-    #endif
+    errlog("write request\n");
     // pthread_mutex_lock(&lock);
     Node<K,V>* p = this->_search(k);
     if(p == NULL){
@@ -374,22 +355,12 @@ int BinaryTree<K,V>::dump(FILE *f){
     tstruct = *localtime(&now);
     strftime(time_str, 20, TIME_FMT, &tstruct);
     time_str[19] = '0';
-    #ifdef _DEBUG
-        fprintf(stderr, "BinaryTree::dump: Check the time: %s\n", time_str);
-        fflush(stderr);
-    #endif
+    errlog("BinaryTree::dump: Check the time: %s\n", time_str);
     fwrite(time_str, 1, sz_k + sz_v, f);
 
     while(!stk.empty()){
         n = stk.top();
         stk.pop();
-        /* 
-            Do whatever you want with n here 
-        */
-        // #ifdef _DEBUG
-        //     fprintf(stderr, "Program Here\n");
-        // #endif
-
         fwrite(&(n -> key), 1, sz_k, f);
         fwrite(&(n -> value), 1, sz_v, f);
 
@@ -403,16 +374,10 @@ int BinaryTree<K,V>::dump(FILE *f){
     fflush(f);
     Node<K,V> dummy;
     log_action(dummy.key, dummy.value, _sync_);
-    #ifdef _DEBUG
-        fprintf(stderr, "BinaryTree::dump: freeing time_str here\n");
-        fflush(stderr);
-    #endif
+    errlog("BinaryTree::dump: freeing time_str here\n");
 
     delete[] time_str;
-    #ifdef _DEBUG
-        fprintf(stderr, "BinaryTree::dump: time_str freed successfully here\n");
-        fflush(stderr);
-    #endif
+    errlog("BinaryTree::dump: time_str freed successfully here\n");
     // pthread_mutex_unlock(&lock);
     return 0;
 }
@@ -424,23 +389,13 @@ void BinaryTree<K,V>::_free(){
     while(!stk.empty()) stk.pop();
     Node<K,V>* n = root;
     if(n != NULL) stk.push(n);
-    #ifdef _DEBUG
-        if(!stk.empty()){
-                fprintf(stderr, "Size of tree: %d, stk not empty\n", size);
-        }
-    #endif
+    errlog("BinaryTree::_free: Size of tree: %d, stk not empty\n", size);
     while(!stk.empty()){
-        // #ifdef _DEBUG
-        //     fprintf(stderr, "_free: Program Here\n");
-        // #endif
         n = stk.top();
         stk.pop();
         if(n -> l != NULL) stk.push(n -> l);
         if(n -> r != NULL) stk.push(n -> r);
-        #ifdef _DEBUG
-            fprintf(stderr, "BinaryTree::_free: Freeing Node here\n");
-            fflush(stderr);
-        #endif
+        errlog("BinaryTree::_free: Freeing Node here\n");
         delete n;
     }
     root = NULL;
