@@ -14,7 +14,7 @@
 struct Blk
 {
 	/// @brief Block of memory
-	byte block[BLK_SIZE];
+	byte_ block[BLK_SIZE];
 };
 
 struct BlkMetaData

@@ -8,7 +8,7 @@
 #include <string>
 #include <cstring>
 
-static byte tombByte[] = {TOMBSTONE_BYTE};
+static byte_ tombByte[] = {TOMBSTONE_BYTE};
 
 /**
  * @brief Checks if the value is a tombstone
@@ -23,7 +23,7 @@ static bool isTomb(V* entryv)
 	size_t sz_v = sizeof(V);
 	for(int i = 0; i < sz_v; i++)
 	{
-		if(memcmp((byte*)entryv + i, tombByte, 1) != 0)
+		if(memcmp((byte_*)entryv + i, tombByte, 1) != 0)
 		{
 			return false;
 		}
