@@ -15,9 +15,6 @@
 
 using namespace std;
 
-unsigned char _write_ = 1,
-              _del_ = 2,
-              _sync_ = 3;
 
 /** 
  * @brief Node for the In Memory Trees
@@ -52,6 +49,9 @@ class BinaryTree{
         string logfilename = "";
         stack<Node<K,V>*> stk; // for inorder traversal
         Node<K,V>* root; //Pointer to the root
+        unsigned char _write_ = 1,
+              _del_ = 2,
+              _sync_ = 3;
         // pthread_mutex_t lock;
 
         // Constructors ******************
