@@ -5,7 +5,7 @@ SRC_DIR=./src
 OBJS=$(BUILD_DIR)/main.o $(BUILD_DIR)/master.o $(BUILD_DIR)/FileIO.o
 DEBUG_OBJS=$(BUILD_DEBUG_DIR)/main.o $(BUILD_DEBUG_DIR)/master.o $(BUILD_DEBUG_DIR)/FileIO.o
 FLAGS= -std=c++17 -O3 -Wno-unused-result -lpthread
-DEBUG_FLAGS = -D _DEBUG -std=c++17 -Wno-unused-result -lpthread
+DEBUG_FLAGS = -g -D _DEBUG -std=c++17 -Wno-unused-result -lpthread
 
 main: $(BUILD_DIR) main.o master.o FileIO.o
 	g++ -o $(BUILD_DIR)/$@  $(OBJS) $(FLAGS)
