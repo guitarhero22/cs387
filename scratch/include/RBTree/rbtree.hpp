@@ -100,6 +100,7 @@ class BinaryTree{
         Node<K,V>* _inorder();//inorder travversal of the tree for traversal
         ~BinaryTree()
         {
+            while(!stk.empty()) stk.pop();
             setLogFile("");
         }
 };
@@ -174,10 +175,13 @@ void BinaryTree<K,V>::fromFile(string fname)
         }
         else if(*(unsigned char*) buff == _del_){
             del(*(K *)(buff + 1));
-        }else{
+        }else if(*(unsigned char*) buff == _sync_)
+        {
             #ifdef _DEBUG
-                fprintf(stderr, "No actions in backup entry\n");
+                fprintf(stderr, "Backups in Sync\n");
             #endif
+        }else{
+            fprintf(stderr, "backup entry corrupted!\n");
         }
     }
     if(backup != NULL) fclose(backup);

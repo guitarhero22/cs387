@@ -101,7 +101,7 @@ class BloomFile{
            }
             bloomwrite = fopen(fname.c_str(), "wb");
                 if(bloomwrite == NULL){
-                    fprintf(stderr,  "File name Found!\n");
+                    fprintf(stderr,  "Bloom: Could not create File  Found!\n");
                     exit(1);
                 }
                 fwrite(arr, sizeof(unsigned char), (1<<16)/8, bloomwrite);
