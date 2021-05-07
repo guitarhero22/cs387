@@ -163,6 +163,7 @@ void Master::adjust(){
 
 	//can finally reclaim memory
 	delete this->reserve;
+	this->reserve = NULL;
 	this->memlock.unlock();
 
 	//release the file lock
