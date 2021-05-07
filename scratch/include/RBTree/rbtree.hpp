@@ -149,39 +149,51 @@ void BinaryTree<K,V>::fromFile(string fname)
     long int start = ftell(backup);
     fseek(backup, 0, SEEK_END);
     float num_entries = 1.0 * (ftell(backup) - start) / (entry_size);
+    
     if(floor(num_entries) != num_entries){
         fprintf(stderr, "Backup File Corrupted!\n");
         exit(1);
     }
     unsigned char * buff = (unsigned char *) malloc(entry_size + 1);
     bool found_sync = false;
-    while(ftell(backup) > start && !found_sync){
-        fseek(backup, -entry_size, SEEK_CUR);
-        fread(buff, entry_size, 1, backup);
-        fseek(backup, -entry_size, SEEK_CUR);
-        if(*((unsigned char *) buff) == _sync_){
-            found_sync = true;
+    #ifdef _DEBUG
+        fprintf(stderr, "BinaryTree::fromFile Number of entries: %f, start: %ld, end: %ld\n", num_entries, start, ftell(backup));
+    #endif
+    if(start != ftell(backup)){
+        while(ftell(backup) > start && !found_sync){
             #ifdef _DEBUG
-                fprintf(stderr, "Backup Restore: Found _sync_\n");
+                fprintf(stderr, "BinaryTree::fromFile inside while loop: start: %ld, end %ld\n", start, ftell(backup));
             #endif
+            fseek(backup, -entry_size, SEEK_CUR);
+            fread(buff, entry_size, 1, backup);
+            fseek(backup, -entry_size, SEEK_CUR);
+            if(*((unsigned char *) buff) == _sync_){
+                found_sync = true;
+                #ifdef _DEBUG
+                    fprintf(stderr, "Backup Restore: Found _sync_\n");
+                #endif
+            }
         }
-    }
-    if(found_sync) fseek(backup, entry_size, SEEK_CUR);
-    while(!feof(backup)){
-        fread(buff, entry_size, 1, backup);
-        if(*(unsigned char*) buff == _write_)
-        {
-            insert(*(K *)(buff + 1), *(V *)(buff + 1 + sz_k));
-        }
-        else if(*(unsigned char*) buff == _del_){
-            del(*(K *)(buff + 1));
-        }else if(*(unsigned char*) buff == _sync_)
-        {
-            #ifdef _DEBUG
-                fprintf(stderr, "Backups in Sync\n");
-            #endif
-        }else{
-            fprintf(stderr, "backup entry corrupted!\n");
+        if(found_sync) fseek(backup, entry_size, SEEK_CUR);
+        #ifdef _DEBUG
+            fprintf(stderr, "BinaryTree::fromFile while end: End of File: %d, current pos: %ld\n", feof(backup), ftell(backup));
+        #endif 
+        while(!feof(backup)){
+            fread(buff, entry_size, 1, backup);
+            if(*(unsigned char*) buff == _write_)
+            {
+                insert(*(K *)(buff + 1), *(V *)(buff + 1 + sz_k));
+            }
+            else if(*(unsigned char*) buff == _del_){
+                del(*(K *)(buff + 1));
+            }else if(*(unsigned char*) buff == _sync_)
+            {
+                #ifdef _DEBUG
+                    fprintf(stderr, "Backups in Sync\n");
+                #endif
+            }else{
+                fprintf(stderr, "backup entry corrupted!\n");
+            }
         }
     }
     if(backup != NULL) fclose(backup);
