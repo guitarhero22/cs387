@@ -1,7 +1,18 @@
 INCLUDE_DIR=-I./include
 dependencies=src/BufferManager/FileIO.cpp
 MAIN=src/master.cpp
-FLAGS=--std=c++17 -Wall -Wno-unused-result -Wno-unused-variable -O3
+FLAGS=--std=c++17 -O3
 
-final: $(MAIN) $(dependencies)
-	g++ -o $(@F:.cpp=) $(FLAGS) $(INCLUDE_DIR) -O3 $^
+master: master.o FileIO.o
+	g++ -c -o $@ $(FLAGS) $(INCLUDE_DIR) $^ 2> errlinking.log
+
+master.o: $(MAIN)
+	g++ -c -o $@ $(FLAGS) $(INCLUDE_DIR) $< 2> errmaster.log
+
+FileIO.o: $(dependencies)
+	g++ -c -o $@ $(FLAGS) $(INCLUDE_DIR) $< 2> errFileIO.log
+
+clean:
+	rm *.o 
+	rm *.log
+	rm master 
