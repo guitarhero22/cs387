@@ -5,18 +5,14 @@
 #include "Bloom/bloom.hpp"
 #include "Core/Merge.hpp"
 #include "Core/Read.hpp"
+#include "utils.hpp"
 #include <thread>
 #include <mutex>
 #include <fstream>
 #include <filesystem>
 #include <vector>
-#define MAX_TREE_SIZE 5
 
-#ifdef _DEBUG
-#define errlog(a) fprintf(stderr, a), fflush(stderr)
-#else
-#define errlog(a)
-#endif
+#define MAX_TREE_SIZE 5
 #define NUMFILES 10
 
 using namespace std;
