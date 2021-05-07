@@ -1,5 +1,7 @@
 #include "master.hpp"
 
+#include <unistd.h>
+
 
 bool Master::dbread(const K &k, V &v){
 
@@ -239,6 +241,8 @@ Master::Master(){
 		this->reserve->fromFile(backups[i]);
 		
 		adjust();
+		if(i==0)
+			sleep(1);
 
 	}
 

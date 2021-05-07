@@ -12,10 +12,10 @@ main: $(BUILD_DIR) main.o master.o FileIO.o
 	cp $(BUILD_DIR)/$@ fs/$@
 
 debug: $(BUILD_DEBUG_DIR) $(DEBUG_OBJS)
-	g++ -o $(BUILD_DEBUG_DIR)/main $(DEBUG_OBJS) $(FLAGS)
+	g++ -o $(BUILD_DEBUG_DIR)/main $(DEBUG_OBJS) $(DEBUG_FLAGS)
 	cp $(BUILD_DEBUG_DIR)/main fs/main
 
-fs:	$(SRC_DIR)/fs.cpp fs/fs
+fs:	$(SRC_DIR)/fs.cpp
 	rm -rf fs
 	mkdir fs
 	# 
@@ -55,3 +55,6 @@ clean:
 	rm -rf $(BUILD_DIR)
 	rm -rf $(BUILD_DEBUG_DIR)
 	rm -f fs/fs
+
+clean-fs:
+	rm -rf fs
