@@ -7,11 +7,11 @@ DEBUG_OBJS=$(BUILD_DEBUG_DIR)/main.o $(BUILD_DEBUG_DIR)/master.o $(BUILD_DEBUG_D
 FLAGS= -std=c++17 -O3 -Wno-unused-result -lpthread
 DEBUG_FLAGS = -g -D _DEBUG -std=c++17 -Wno-unused-result -lpthread
 
-main: $(BUILD_DIR) main.o master.o FileIO.o
+main: $(BUILD_DIR) main.o master.o FileIO.o fs
 	g++ -o $(BUILD_DIR)/$@  $(OBJS) $(FLAGS)
 	cp $(BUILD_DIR)/$@ fs/$@
 
-debug: $(BUILD_DEBUG_DIR) $(DEBUG_OBJS)
+debug: $(BUILD_DEBUG_DIR) $(DEBUG_OBJS) fs
 	g++ -o $(BUILD_DEBUG_DIR)/main $(DEBUG_OBJS) $(DEBUG_FLAGS)
 	cp $(BUILD_DEBUG_DIR)/main fs/main
 

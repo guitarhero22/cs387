@@ -136,6 +136,9 @@ void Master::adjust(){
 	//acquire the file lock
 	this->fslock.lock();
 
+
+	errlog("Master::adjust: Beginning File Merge ...\n");
+
 	//empty tempfile
 	filesystem::resize_file(tempfile, 0);
 	
@@ -151,10 +154,15 @@ void Master::adjust(){
 	FILE *oldest2 = fopen(tempfile.c_str(), "rb");
 	FILE *oldest1 = fopen(filesys[(this->recent + 1) % NUMFILES].c_str(), "rb");
 	FILE *newfd = fopen(filesys[(this->recent + 2) % NUMFILES].c_str(), "wb");
+
+	errlog("Master::adjust: Calling Merge Files...\n");
+
 	merge_files<K, V>(oldest2, oldest1, newfd);
 	fclose(oldest2);
 	fclose(oldest1);
 	fclose(newfd);
+
+	errlog("Master::adjust Files Merged ...\n");
 
 	//empty tempfile
 	filesystem::resize_file(tempfile, 0);
