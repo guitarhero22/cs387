@@ -34,7 +34,8 @@ bool Master::dbread(const K &k, V &v){
 	}
 
 	this->memlock.unlock();
-	errlog("Master::dbread: Key not found in memory\n");
+	this->fslock.lock();
+	//errlog("Master::dbread: Key not found in memory\n");
 	//now traverse filesystem
 	for (int i=r; i!=(r+2)%NUMFILES; i=(i-1+NUMFILES)%NUMFILES){
 		int fd = FileIO::openFile(filesys[i]);
@@ -47,10 +48,10 @@ bool Master::dbread(const K &k, V &v){
 		FileIO::closeFile(fd);
 	}
 
-	errlog("Master::dbread: Key not found in filesystem\n");
+	//errlog("Master::dbread: Key not found in filesystem\n");
 	//last two danger files. if recent has been updated,
 	//last is redundant, becuase we already checked reserve too
-	this->fslock.lock();
+
 	for (int i = (r + 2) % NUMFILES; i != r; i = (i - 1 + NUMFILES) % NUMFILES)
 	{
 		int fd = FileIO::openFile(filesys[i]);
@@ -89,6 +90,7 @@ void Master::serve(string batchfile){
 	outname.append(".out");
 
 	ifstream f1(batchfile);
+	ofstream f2(outname);
 	while (getline(f1, a))
 	{
 		if (a[0] == 'r')
@@ -102,7 +104,6 @@ void Master::serve(string batchfile){
 			K1 = *(K *)y.c_str();
 			// cout << string((char *) &K1) << endl;
 			//	for(int i=0;i<1;i++) cout<<K1.bytes[i];
-			ofstream f2(outname,ios::app);
 			if(this->dbread(K1, V1))
 			{
 				char out1[65];
@@ -244,6 +245,8 @@ void Master::run(vector <string> batchfiles){
 
 Master::Master(){
 
+	this->recent = 9;
+
 	//assumes that file<i> begins with a timestamp
 
 	//what files are we accessing?
@@ -281,7 +284,7 @@ Master::Master(){
 		tm ts_i;
 		strptime(time_stri, TIME_FMT, &ts_i);
 
-		if (difftime(mktime(&ts_max), mktime(&ts_i)) < 0)
+		if (difftime(mktime(&ts_max), mktime(&ts_i)) <= 0)
 		{
 			candidate = i;
 			memcpy(&ts_max, &ts_i, sizeof(tm));
