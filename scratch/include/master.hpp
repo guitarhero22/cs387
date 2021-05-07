@@ -6,6 +6,7 @@
 #include <mutex>
 #include <fstream>
 #include <filesystem>
+#include <vector>
 
 #define NUMFILES 10
 
@@ -39,7 +40,7 @@ class Master{
 
 	void serve(string batchfile);
 
-	void run();
+	void run(vector <string> batchfiles);
 
 	Master();
 };

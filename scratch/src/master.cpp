@@ -173,7 +173,7 @@ Master::Master(){
 
 	//what is recent?
 
-	FILE *zeroth = fopen(filesys[0].c_str, "rb");
+	FILE *zeroth = fopen(filesys[0].c_str(), "rb");
 	fseek(zeroth, 0, SEEK_SET);
 	char time_str0[128];
 	fread(time_str0, 1, 128, zeroth);
@@ -183,7 +183,7 @@ Master::Master(){
 	strptime(time_str0, TIME_FMT, &ts_max);
 
 	for (int i=1; i<NUMFILES; i++){
-		FILE *ith = fopen(filesys[i].c_str, "rb");
+		FILE *ith = fopen(filesys[i].c_str(), "rb");
 		fseek(ith, 0, SEEK_SET);
 		char time_stri[128];
 		fread(time_stri, 1, 128, ith);
