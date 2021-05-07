@@ -1,3 +1,6 @@
+#ifndef __MASTER_H__
+#define __MASTER_H__
+
 #include "RBTree/rbtree.hpp"
 #include "Bloom/bloom.hpp"
 #include "Core/Merge.hpp"
@@ -44,3 +47,5 @@ class Master{
 
 	Master();
 };
+
+#endif
