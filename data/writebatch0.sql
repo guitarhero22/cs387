@@ -1,0 +1,10 @@
+insert into testmultiple values(233aebed5a4d6140151c84c469bf9e892a117b0f20c5e02112859a61189dcc8d, 52) on conflict(keycol) do update valcol = 52;
+insert into testmultiple values(f98083d6cc8f110c145c588c9eb01fdc5d45aa201c0802ec045fb0792373e004, 10) on conflict(keycol) do update valcol = 10;
+insert into testmultiple values(4ca0adc9f61ffbd2ed988709c9daee5257c191855b61abf9d38b4e7c3ec61c6d, 30) on conflict(keycol) do update valcol = 30;
+insert into testmultiple values(7df8f02ba87c9e681c5b0dc7fb416c7aeee4ca6f840133e55921a6a72bb2b6c6, 85) on conflict(keycol) do update valcol = 85;
+insert into testmultiple values(363a0bbab4e8dbc6151561e4835894b5c8c8e8c80d034d000bf111ed364bb247, 100) on conflict(keycol) do update valcol = 100;
+insert into testmultiple values(d1c15db4a773591afab485541a90d0f3a732c23f36694b47089ed57506705d66, 49) on conflict(keycol) do update valcol = 49;
+insert into testmultiple values(5b2779f7b83c494e4ea09291e9f6aea3431c75c766b40dbc80ac85a9957ab332, 99) on conflict(keycol) do update valcol = 99;
+insert into testmultiple values(7487e66162b516dfad40b29dffe24ec7f1e8c81cb656bf694e1b634d621090ad, 87) on conflict(keycol) do update valcol = 87;
+insert into testmultiple values(7d2872c418595cc16ef5521c381c540ea7e2dc65f1791e7db1df10f05519f202, 36) on conflict(keycol) do update valcol = 36;
+insert into testmultiple values(faf3cb74d9b6501b619572b81225d84d9d814753a884512adbd0d800144f8e9c, 41) on conflict(keycol) do update valcol = 41;
