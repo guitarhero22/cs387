@@ -243,7 +243,9 @@ Master::Master(){
 		adjust();
 		if(i==0)
 		{
-			printf("Secret Key:dQw4w9WgXcQ\n");
+			#ifdef _DEBUG
+				printf("Secret Key:dQw4w9WgXcQ\n");
+			#endif
 			sleep(1);
 		}
 
