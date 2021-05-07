@@ -44,3 +44,5 @@ scratch/fs
 # Data SQL scripts
 scratch/**.sql
 scratch/data/*.sql
+**~
+**.out
