@@ -13,7 +13,7 @@ bool Master::dbread(const K &k, V &v){
 		return false;
 	}
 
-	errlog("Bloom returned True\n");
+	//errlog("Bloom returned True\n");
 
 	//check in memory tree, and reserve too, since you hold lock
 	Node<K, V> *n = this->bintree->search(k);
@@ -41,8 +41,10 @@ bool Master::dbread(const K &k, V &v){
 		if (findEntry<K, V>(fd, k, v))
 		{
 			cout << (char *) &v << endl;
+			FileIO::closeFile(fd);
 			return true;
 		}
+		FileIO::closeFile(fd);
 	}
 
 	//last two danger files. if recent has been updated,
@@ -54,9 +56,11 @@ bool Master::dbread(const K &k, V &v){
 		if (findEntry<K, V>(fd, k, v))
 		{
 			cout << (char *) &v << endl;
+			FileIO::closeFile(fd);
 			this->fslock.unlock();
 			return true;
 		}
+		FileIO::closeFile(fd);
 	}
 	this->fslock.unlock();
 	cout << (char *) &v << endl;

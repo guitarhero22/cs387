@@ -17,7 +17,7 @@ int FileIO::openFile(const std::string& filePath)
 
 void FileIO::closeFile(int fileHandle)
 {
-	flushFile(fileHandle);
+	//flushFile(fileHandle);
 
 	unsigned int i = 0;
 	for(auto &blk: buffer)
