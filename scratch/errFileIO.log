@@ -1,0 +1,8 @@
+src/BufferManager/FileIO.cpp: In static member function ‘static void FileIO::flushFile(int)’:
+src/BufferManager/FileIO.cpp:52:8: warning: ignoring return value of ‘ssize_t write(int, const void*, size_t)’, declared with attribute warn_unused_result [-Wunused-result]
+   write(fileHandle, blk.block, BLK_SIZE);
+   ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/BufferManager/FileIO.cpp: In static member function ‘static int FileIO::evictLRU()’:
+src/BufferManager/FileIO.cpp:131:7: warning: ignoring return value of ‘ssize_t write(int, const void*, size_t)’, declared with attribute warn_unused_result [-Wunused-result]
+  write(fd, blk.block, BLK_SIZE);
+  ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
