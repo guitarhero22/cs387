@@ -8,8 +8,6 @@ FLAGS= -std=c++17 -Wno-unused-result -lpthread
 DEBUG_FLAGS = -g -D _DEBUG -std=c++17 -Wno-unused-result -lpthread
 DATA_FOLDER=./data
 
-grade: main data
-
 main: $(BUILD_DIR) main.o master.o FileIO.o fs
 	g++ -o $(BUILD_DIR)/$@  $(OBJS) $(FLAGS)
 	cp $(BUILD_DIR)/$@ fs/$@
@@ -49,7 +47,7 @@ $(BUILD_DEBUG_DIR)/FileIO.o: $(SRC_DIR)/BufferManager/FileIO.cpp
 	g++ -c -o $@ $(DEBUG_FLAGS) -I$(INCLUDE_DIR) $<
 
 gendata:
-	cd $(DATA_FOLDER) && python3 datagen.py 8 2000
+	cd $(DATA_FOLDER) && python3 datagen.py 2 50000
 
 ./build:
 	mkdir build

@@ -35,14 +35,6 @@ lsmschema.close()
 for batch in range(batches):
 	#this generates writes, and the reads expected to return non-null stuff
 	#higher batch numbers are more recently touched stuff
-	writefileb = open("bwritebatch"+str(batch)+".sql", "w")
-	read1fileb = open("bread1batch"+str(batch)+".sql", "w")
-	read2fileb = open("bread2batch"+str(batch)+".sql", "w")
-	writefileb.write("insert into testmultiple values")
-
-	writefilecsv = open("writebatch"+str(batch)+".csv", "w")
-	read1filecsv = open("read1batch"+str(batch)+".csv", "w")
-	read2filecsv = open("read2batch"+str(batch)+".csv", "w")
 
 	writefiles = open("writebatch"+str(batch)+".scratch", "w")
 	read1files = open("read1batch"+str(batch)+".scratch", "w")
@@ -57,20 +49,13 @@ for batch in range(batches):
 		v = token_hex(32)
 		# writefile.write("insert into testmultiple values('%s', '%s') on conflict(keycol) do update set valcol = '%s';\n" %(str(k), str(v), str(v)))
 		writefile.write("insert into testmultiple values('%s', '%s');\n" %(str(k), str(v)))
-		writefileb.write("\n,('%s', '%s')" %(str(k), str(v)))
-		writefilecsv.write("%s, %s\n" %(str(k), str(v)))
 		writefiles.write("w %s, %s;\n" %(str(k), str(v)))
 		if op%4 == 0:
 			read2file.write("select * from testmultiple where keycol = '%s';\n"%str(k))
-			read2fileb.write("select * from testmultiple where keycol = '%s';\n"%str(k))
-			read2filecsv.write("%s\n"%str(k))
 			read2files.write("r %s\n"%str(k))
 		if op%10 == 0:
 			k1 = token_hex(32)
 			read1file.write("select * from testmultiple where keycol = '%s';\n"%str(k1))
-			read1fileb.write("select * from testmultiple where keycol = '%s';\n"%str(k1))
-			read1filecsv.write("%s\n"%str(k1))
 			read1files.write("r %s;\n"%str(k1))
 
-	writefileb.write(";")
 
