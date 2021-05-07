@@ -42,4 +42,4 @@ scratch/build-debug
 scratch/fs
 
 # Data SQL scripts
-scratch/data/*.sql
+**.sql
