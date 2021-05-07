@@ -56,10 +56,12 @@ class Master{
 	void adjust();
 
 	void serve(string batchfile);
-
+	int batchHandler(string fname);
 	void run(vector <string> batchfiles);
 
 	Master();
+
+	~Master();
 };
 
 #endif

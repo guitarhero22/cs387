@@ -8,7 +8,4 @@ int main(int argc, char* argv[]){
 		batchfiles.assign(argv + 1, argv + argc);
 	}
 	master.run(batchfiles);
-	delete master.bloom;
-	delete master.reserve;
-	delete master.bintree;
 }

@@ -15,6 +15,12 @@ debug: $(BUILD_DEBUG_DIR) $(DEBUG_OBJS)
 	g++ -o $(BUILD_DEBUG_DIR)/main $(DEBUG_OBJS) $(FLAGS)
 	cp $(BUILD_DEBUG_DIR)/main fs/main
 
+fs:	$(SRC_DIR)/fs.cpp
+	rm -rf fs
+	mkdir fs
+	g++ -o ./fs/$@ $(FLAGS) -I$(INCLUDE_DIR) $<
+	cd fs && ./fs
+
 main.o: $(SRC_DIR)/main.cpp
 	g++ -c -o $(BUILD_DIR)/$@ $(FLAGS) -I$(INCLUDE_DIR) $<
 
@@ -42,3 +48,4 @@ $(BUILD_DEBUG_DIR)/FileIO.o: $(SRC_DIR)/BufferManager/FileIO.cpp
 clean:
 	rm -rf $(BUILD_DIR)
 	rm -rf $(BUILD_DEBUG_DIR)
+	rm -f fs/fs
