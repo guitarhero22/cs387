@@ -18,8 +18,14 @@ debug: $(BUILD_DEBUG_DIR) $(DEBUG_OBJS)
 fs:	$(SRC_DIR)/fs.cpp
 	rm -rf fs
 	mkdir fs
+	# 
+	# *** Please wait for 10 seconds...
+	# 
 	g++ -o ./fs/$@ $(FLAGS) -I$(INCLUDE_DIR) $<
 	cd fs && ./fs
+	# 
+	# *** Filesystem Made. Check in fs.
+	#
 
 main.o: $(SRC_DIR)/main.cpp
 	g++ -c -o $(BUILD_DIR)/$@ $(FLAGS) -I$(INCLUDE_DIR) $<

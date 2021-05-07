@@ -1,4 +1,5 @@
 #include<stdio.h>
+#include<unistd.h>
 #include "RBTree/rbtree.hpp"
 #include "Bloom/bloom.hpp"
 
@@ -28,6 +29,7 @@ int main(){
     //Make FS
     auto bt = BinaryTree<K,K>();
     for(int i = 0; i<10; ++i){
+        sleep(1);
         bt.dump(fopen(("file" + to_string(i)).c_str(), "wb"));
     }
 
