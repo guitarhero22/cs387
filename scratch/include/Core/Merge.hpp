@@ -83,6 +83,9 @@ void merge_files(FILE* oldest2, FILE* oldest1, FILE* newfd)
 	fread(&entry2k, sz_k, 1, oldest2);
 	fread(&entry2v, sz_v, 1, oldest2);
 
+	if(feof(oldest1) || feof(oldest2))
+		return;
+
 	while(1)
 	{
 

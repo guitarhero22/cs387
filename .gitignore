@@ -40,3 +40,6 @@ scratch/build-debug
 
 # Filesystem
 scratch/fs
+
+# Data SQL scripts
+scratch/data/*.sql

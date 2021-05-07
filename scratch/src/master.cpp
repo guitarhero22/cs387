@@ -73,6 +73,9 @@ void Master::dbwrite(K k, V v){
 
 void Master::serve(string batchfile){
 	string a;
+	string outname;
+	outname=fname.substr(0);
+	outname.append(".out");
 
 	ifstream f1(batchfile);
 	while (getline(f1, a))
@@ -87,6 +90,11 @@ void Master::serve(string batchfile){
 			K1 = *(K *)y.c_str();
 			//	for(int i=0;i<1;i++) cout<<K1.bytes[i];
 			this->dbread(K1, V1);
+			ofstream f2(outname,ios::app);
+			char* out1;
+			out1=(char*)V1.bytes;
+			f2<<out1;
+			f2<<"\n";
 			//	cout<<y<<endl;
 		}
 		
@@ -250,7 +258,12 @@ Master::Master(){
 		
 		adjust();
 		if(i==0)
+		{
+			#ifdef _DEBUG
+				printf("Secret Key:dQw4w9WgXcQ\n");
+			#endif
 			sleep(1);
+		}
 
 	}
 
