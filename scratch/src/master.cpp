@@ -17,7 +17,7 @@ bool Master::dbread(const K &k, V &v){
 
 	//check in memory tree, and reserve too, since you hold lock
 	Node<K, V> *n = this->bintree->search(k);
-	Node<K, V> *nr;
+	Node<K, V> *nr = NULL;
 	if(this->reserve != NULL)
 		nr = this->reserve->search(k);
 	
@@ -34,17 +34,17 @@ bool Master::dbread(const K &k, V &v){
 	}
 
 	this->memlock.unlock();
-	
+	errlog("Master::dbread: Key not found in memory\n");
 	//now traverse filesystem
 	for (int i=r; i!=(r+2)%NUMFILES; i=(i-1+NUMFILES)%NUMFILES){
 		int fd = FileIO::openFile(filesys[i]);
 		if (findEntry<K, V>(fd, k, v))
 		{
-			cout << (char *) &v << endl;
 			return true;
 		}
 	}
 
+	errlog("Master::dbread: Key not found in filesystem\n");
 	//last two danger files. if recent has been updated,
 	//last is redundant, becuase we already checked reserve too
 	this->fslock.lock();
@@ -53,13 +53,11 @@ bool Master::dbread(const K &k, V &v){
 		int fd = FileIO::openFile(filesys[i]);
 		if (findEntry<K, V>(fd, k, v))
 		{
-			cout << (char *) &v << endl;
 			this->fslock.unlock();
 			return true;
 		}
 	}
 	this->fslock.unlock();
-	cout << (char *) &v << endl;
 	return false;
 }
 
@@ -150,7 +148,6 @@ void Master::adjust(){
 	//acquire the file lock
 	this->fslock.lock();
 
-
 	errlog("Master::adjust: Beginning File Merge ...\n");
 
 	//empty tempfile
@@ -169,7 +166,7 @@ void Master::adjust(){
 		FILE *oldest2d = fopen(tempfile.c_str(), "rb"); fseek(oldest2d, 0, SEEK_END);
 		FILE *oldest1d = fopen(filesys[(this->recent + 1) % NUMFILES].c_str(), "rb"); fseek(oldest1d, 0, SEEK_END);
 		FILE *newfdd = fopen(filesys[(this->recent + 2) % NUMFILES].c_str(), "rb"); fseek(newfdd, 0, SEEK_END);
-	printf("********Before: Tempfile: %ld, Recent+1: %ld, newfd: %ld\n", ftell(oldest2d), ftell(oldest1d), ftell(newfdd));
+		printf("********Before: Tempfile: %ld, Recent+1: %ld, newfd: %ld\n", ftell(oldest2d), ftell(oldest1d), ftell(newfdd));
 		fclose(oldest2d);
 		fclose(oldest1d);
 		fclose(newfdd);
