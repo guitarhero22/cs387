@@ -65,7 +65,7 @@ void merge_files(FILE* oldest2, FILE* oldest1, FILE* newfd)
 	if(difftime(mktime(&ts2), mktime(&ts1)) < 0)
 	{
 		#ifdef _DEBUG
-			fprintf(stderr, "merge_files: Files not passed in correct order, files not merged");
+			fprintf(stderr, "merge_files: Files not passed in correct order, files not merged\n");
 		#endif
 
 		return;

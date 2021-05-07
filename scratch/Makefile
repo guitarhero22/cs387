@@ -9,9 +9,11 @@ DEBUG_FLAGS = -g -D _DEBUG -std=c++17 -Wno-unused-result -lpthread
 
 main: $(BUILD_DIR) main.o master.o FileIO.o
 	g++ -o $(BUILD_DIR)/$@  $(OBJS) $(FLAGS)
+	cp $(BUILD_DIR)/$@ fs/$@
 
 debug: $(BUILD_DEBUG_DIR) $(DEBUG_OBJS)
 	g++ -o $(BUILD_DEBUG_DIR)/main $(DEBUG_OBJS) $(FLAGS)
+	cp $(BUILD_DEBUG_DIR)/main fs/main
 
 main.o: $(SRC_DIR)/main.cpp
 	g++ -c -o $(BUILD_DIR)/$@ $(FLAGS) -I$(INCLUDE_DIR) $<
