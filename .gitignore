@@ -43,3 +43,4 @@ scratch/fs
 
 # Data SQL scripts
 **.sql
+scratch/data/*.sql
